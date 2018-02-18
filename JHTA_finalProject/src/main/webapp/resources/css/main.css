@@ -1,0 +1,135 @@
+a.plan-img {
+    float: left;
+    width: 310px;
+    height: 202px;
+    margin: 16px 16px 0 0;
+    position: absolute;
+    top:0px;
+    left:0px;
+    overflow: hidden;           
+}
+        
+div#calendar {
+  width: 200px;
+  height: 80px;
+  margin: 0 auto;
+}
+input[type=date] {
+  height: 35px;
+  margin: 0 auto;
+  width: 100%;
+  font-family: arial, sans-serif;
+  font-size: 15px;
+  font-weight: bold;
+  text-transform: uppercase;
+  background-color: gray;
+  outline: none;
+  border: 0;
+  border-radius: 3px;
+  padding: 0 3px;
+  color: #fff;
+  
+  &::-webkit-datetime-edit-month-field {
+    color: white;
+  }
+  &::-webkit-datetime-edit-day-field {
+    color: white;
+  }
+  &::-webkit-datetime-edit-year-field {
+    color: white;
+  }
+  
+  &::-webkit-clear-button {
+    font-size: 18px;
+    height: 30px;
+    position: relative;
+    right: 5px;
+    margin-right: 4px;
+  }
+  &::-webkit-inner-spin-button {
+    height: 30px;
+  }
+  &::-webkit-calendar-picker-indicator {
+    font-size: 18px;
+    
+        
+    &:hover {
+      background-color: lighten(#2f2f2f,40%);
+      color: darken(#fff, 10%);
+      cursor: pointer;
+    }
+    &:active {
+      color: blue;
+    }
+  }
+}
+        
+        
+div#plan-img-area {
+    position: absolute;
+    top: 30px;
+    left: 0;
+    width: 310px;
+    padding: 80px 30px 10px 10px;            
+}
+
+a.city-img {
+	float: left;
+	width: 220px;
+	height: 230px;
+	margin: 16px 16px 0 0;
+	position: relative;
+	overflow: hidden;
+}
+
+div.container {
+	max-width: 976px;
+}
+
+div#search-area {
+	position: relative;
+	top: 160px;
+	left: 29%;
+	width: 440px;
+	padding: 20px 20px 40px 20px;
+}
+
+input#input-search {
+	width: 400px;
+	font-size: 20px;
+	display: block;
+}
+
+/* 달력 */
+div#wholeCalander {
+     width: 200px;
+     margin: 0 auto;
+}
+.btn-holder {
+     text-align: center;
+     margin: 10px 0 10px 0;
+}
+#calendar table {
+     border-collapse: collapse;
+     text-align: center;
+}
+#calendar table thead td {
+     height: 20px;
+     font-weight: bold;
+}    
+#calendar table td {
+     border: solid 1px #000;
+}
+#calendar table td.date-cell {
+     height: 30px;
+}
+#calendar table td.sun {
+     color: red;
+}
+#calendar table td.sat {
+     color: blue;
+}
+#calendar table td.not-this-month {
+     background: #ddd;
+     color: #999;
+}

@@ -1,0 +1,272 @@
+##세부일정등록
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schSendListRegistView.js'></script>
+<style>
+  .ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  /* IE 6 doesn't support max-height
+   * we use height instead, but this forces the menu to always be this tall
+   */
+  * html .ui-autocomplete {
+    height: 100px;
+  }
+ 
+ .filebox input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip:rect(0,0,0,0);
+  border: 0;
+}
+
+.filebox label {
+  display: inline-block;
+  padding: .5em .75em;
+  color: #999;
+  font-size: inherit;
+  line-height: normal;
+  vertical-align: middle;
+  background-color: #fdfdfd;
+  cursor: pointer;
+  border: 1px solid #ebebeb;
+  border-bottom-color: #e2e2e2;
+  border-radius: .25em;
+}
+
+/* named upload */
+.filebox .upload-name {
+  display: inline-block;
+  padding: .5em .75em;  /* label의 패딩값과 일치 */
+  font-size: inherit;
+  font-family: inherit;
+  line-height: normal;
+  vertical-align: middle;
+  background-color: #f5f5f5;
+  border: 1px solid #ebebeb;
+  border-bottom-color: #e2e2e2;
+  border-radius: .25em;
+  -webkit-appearance: none; /* 네이티브 외형 감추기 */
+  -moz-appearance: none;
+  appearance: none;
+}
+
+.ui-menu .ui-menu-item-with-icon a {
+  padding-left: 20px;
+
+}
+span.group-item-icon,
+span.file-item-icon {
+  display: inline-block;
+  height: 16px;
+  width: 16px;
+  margin-left: -16px;
+}
+span.group-item-icon {
+  background: url("/image/icons/group.png") no-repeat left 4px;
+}
+span.product-item-icon {
+  background: url("/image/icons/product.png") no-repeat left 7px;
+}
+
+
+</style>
+  
+  
+<!-- container -->
+<div id="container">
+
+	<div class="titarea">
+	<h2>강의수강 안내</h2>
+	</div>
+	<form id="frm2" action="$!WEB_ROOT/sch/sch.do?method=readLiceNoExcel" method="post" enctype="multipart/form-data">
+		<input id="excelFile" type="file" name="file" accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel" style="display:none;" onchange="excelSubmit();"/>
+	</form>
+	
+	<form id="form1" action="$!WEB_ROOT/sch/sch.do?method=insertSendList" method="post" enctype="multipart/form-data">
+	<table width="100%" class="tb_view1">
+		<colgroup>
+		<col width="8%" />
+		<col width="34%" />
+		<col width="8%" />
+		<col width="20%" />
+		<col width="8%" />
+		<col width="*" />
+		</colgroup>
+		
+		<tr>
+		
+			<th scope="row">구분</th>
+			<td  class="r_line">
+				<select id="sch_gb_01" class="sel" style="width:100px;" onchange="changeSchGb01(this.value);">
+					<option value="01" selected="selected">강연회</option>
+					<option value="02">연수회</option>
+				</select>
+				<select id="sch_gb_02" class="sel" style="width:180px;">
+					<option value="01" selected="selected">연구회</option>
+					<option value="02">보수교육</option>
+					<option value="03">Faculty Seminar</option>
+					<option value="04">수요화상</option>
+					<option value="05">Osstem meeting</option>
+				</select>
+			</td>
+			
+			<th scope="row">제목</th>
+			<td colspan="3">
+				<div class="api_atcmp_wrap">
+					## send_dt는 sysdate, 작성자와 작성일은 자바에서 받아온다.
+					<input id="title" name="title" style="width:400px;" type="text" onkeydown="autoSearchTitle(this);">
+					<input id='sch_id' name="sch_id" type='hidden' value=''>
+				</div>
+			</td>
+		
+		</tr>
+		
+		<tr>
+		
+			<th scope="row">장소</th>
+			<td>
+				<input id="place" style="width:272px;" type="text" >
+			</td>
+			
+			<th scope="row">주관</th>
+			<td>
+				<input id="org_nm" style="width:150px;" type="text" >
+			</td>
+			
+			<th scope="row">담당</th>
+			<td>
+				<input id="name" style="width:150px;" type="text" >
+			</td>
+		
+		</tr>
+		
+		<tr>
+			<th scope="row">일시</th>
+			<td colspan="5">
+				<div class="date_input  marr20">
+					<input id="sch_sta_dt" value="" type="text">
+					<span class="search-submit" >
+				</div>
+				
+				<select id="sch_sta_time" class="sel" style="width:70px;">
+					#foreach($hr in $!hr)
+						<option value="$hr.comm_cd" #if($hr.comm_cd == '00') selected="selected"#end>$hr.comm_cd_nm:00</option>
+					#end
+				</select>
+				<select id="sch_fin_time" class="sel" style="width:70px;">
+					#foreach($hr in $!hr)
+						<option value="$hr.comm_cd" #if($hr.comm_cd == '00') selected="selected"#end>$hr.comm_cd_nm:00</option>
+					#end
+				</select>
+		</td>
+		
+		</tr>
+	</table>
+	
+	<!-- btn box(bottom) -->
+		<div class="box_btnarea padb10">
+			<a href="#" class="searchbtn alignr" onclick="registList();">등록</a>
+		</div>
+	<!-- //btn box(bottom) -->
+
+
+	<table id="listForm" width="100%" class="tb_view1" style="display:none;">
+		<colgroup>
+		<col width="8%" />
+		<col width="8%" />
+		<col width="*" />
+		</colgroup>
+		
+		<tr>
+			<th rowspan="2" class="bor_r">발송<br>대상자</th>
+			<td colspan="2">
+				
+				<input type="radio" name="radio" value="" checked onclick="switchCk('allName');"><label for="" ><span><span></span></span>이름</label>
+				<input type="radio" name="radio" value="" onclick="switchCk('group');"><label for=""><span><span></span></span>그룹명</label>
+			
+				<div class="api_atcmp_wrap marr20">
+					<input id="searchName" name="allName" style="width:400px;" type="text" onkeydown="autoSearchName(this)">
+				</div>
+
+			<span class="btn_pack basic alignr"><a href="#" id="excelbtn"><em class="ico_exdown"></em>엑셀 업로드</a></span>
+			<span class="btn_pack basic alignr"><a href="$!WEB_ROOT/file/file.do?method=download&fileId=187"><em class="ico_exdown"></em>예제파일 다운로드</a></span>
+			</td>
+		</tr>
+		
+		<tr>
+			<th class="bor_l">대상자<br>[<span id="totalCnt">0</span>]명</th>
+			<td  class="pad">
+				
+				<table width="100%" class="tb_view2">
+					<colgroup>
+					<col width="100px" />
+					<col width="400px" />
+					<col width="100px" />
+					<col width="100px" />
+					<col width="*" />
+					</colgroup>
+					
+					<thead>
+						<tr>
+							<th scope="row">이름</th>
+							<th scope="row">병의원명</th>
+							<th scope="row">출신대학</th>
+							<th scope="row">나이</th>
+							<th scope="row">삭제</th>
+						</tr>
+					</thead>
+				</table>
+				
+				<div class="tb_scroll2" >
+				
+					<table width="100%" class="tb_view2" id="psnList">
+						<colgroup>
+						<col width="100px" />
+						<col width="400px" />
+						<col width="100px" />
+						<col width="100px" />
+						<col width="*" />
+						</colgroup>
+						
+					</table>
+					
+				</div>
+			
+			</td>
+		</tr>
+		
+		
+		<tr>
+			<th rowspan="2">이미지<br>첨부</th>
+			<td colspan="2">
+				
+				<div class="filebox">
+					<input class="upload-name" value="" style="width:300px;" disabled="disabled">
+					<label for="ex_filename">파일선택</label> 
+					<input type="file" id="ex_filename" name="file" class="upload-hidden" onchange="uploadFile(this)"> 
+				</div>
+				
+				<span class="col_r"> * 최대 이미지 사이즈 : 200*250px, 파일형식 : JPG/GIF 용량제한 : 100KB 이하</span>
+			</td>
+		</tr>
+		
+	</table>
+	</form>
+	
+	<!-- btn box(bottom) -->
+	<div class="box_btnarea">
+		<p class="alignr">
+			<span class="btn_pack basic"><button onclick="formSubmit();"><em class="ico_history"></em>발송</button></span>
+			<span class="btn_pack basic"><button ><em class="ico_cancel"></em>취소</button></span>
+		</p>
+	</div>
+	<!-- //btn box(bottom) -->
+
+</div>
+<!-- //container -->

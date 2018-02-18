@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="clip2.web.common.WebEventDao">
+
+	<select id="getEventDetail" parameterType="int" resultType ="String">
+		select	/* [WebEventDao.xml].[clip2.web.common.WebEventDao.getEventDetail].[01] 변경일자(20160910) */
+		       top 1 imgUrl
+		  from (
+				select  
+					case 
+					when url like '%http%' then url
+					else img_host + url
+					end imgUrl
+				from mw_ws_event
+				where idx = #{value}
+				union 
+				select 
+					case 
+					when url like '%http%' then url
+					else img_host + url
+					end imgUrl
+				from mw_ws_event_cv2
+				where idx = #{value}
+	      ) as t		
+	</select>
+    
+    <select id="getCountCommonEventList" parameterType="map" resultType="int">
+		select	/* [WebEventDao.xml].[clip2.web.common.WebEventDao.getCountCommonEventList].[01] 변경일자(20160910) */  
+			count(*)
+		from mw_ws_event_cv2				 
+		where evt_mode = 'E'
+		and stat = 'R'
+		<choose>
+			<when test="os.equals('common') ">
+			and os = 'common'			
+			</when>
+			<otherwise>
+			and os in ('common', #{os})
+			</otherwise>
+		</choose>
+		and idx not in ( select evnt_id from evnt_src )
+		<if test="recommend.equals('REC')">
+		and rcmd_yn = 'Y'	    
+		</if>
+    </select>
+    
+    <select id="getCommonEventList" parameterType="map" resultType="com.kt.clip2.web.common.vo.EventVO">
+		select	/* [WebEventDao.xml].[clip2.web.common.WebEventDao.getCommonEventList].[01] 변경일자(20160810) */
+			a.idx				as seq, 
+			a.title				as title, 
+			a.beginDay			as beginDay, 
+			a.endDay			as endDay, 
+			a.regTm				as regTm, 
+			a.chgTm				as chgTm, 
+			a.imgUrl			as imgUrl, 
+			a.oldEvtImgUrl		as oldEvtImgUrl, 
+			a.newEvtImgUrl		as newEvtImgUrl, 
+			a.evtIng			as evtIng
+		from (select row_number() over (order by reg_tm desc) as row_num, 
+			idx, title, 
+			convert(char(10), convert(datetime, sday), 121) as beginDay, 
+			convert(char(10), convert(datetime, eday), 121)as endDay, 
+			convert(char(10), reg_tm, 121) as regTm, 
+			convert(char(10), chg_tm, 121)as chgTm, 
+			case 
+			when url like '%http%' then url
+			else img_host + url
+			end imgUrl, 
+			img_host + evt_img as oldEvtImgUrl, 
+			img_host + new_url as newEvtImgUrl,
+			case
+			when cast (convert(varchar(10), getdate(), 112)as int) between cast(sday as int) 
+			and cast(eday as int) then 'continue'
+			else 'over'
+			end evtIng
+		from mw_ws_event_cv2				 
+		where evt_mode = 'E'
+		and stat = 'R'
+		<choose>
+			<when test="os.equals('common') ">
+			and os = 'common'			
+			</when>
+			<otherwise>
+			and os in ('common', #{os})
+			</otherwise>
+		</choose>
+		<if test="recommend.equals('REC')">
+		and rcmd_yn = 'Y'
+		and idx not in ( select evnt_id from evnt_src )	
+		) a
+		where a.row_num between #{beginPage} and #{endPage}
+		order by isnull(a.idx, 999), a.row_num	    
+		</if>
+		<if test="recommend.equals('NOTREC')">
+		and idx not in ( select evnt_id from evnt_src ) 
+		) a
+		where a.row_num between #{beginPage} and #{endPage}
+		order by isnull(a.idx, 999), a.row_num
+		</if>
+    </select>
+    
+</mapper>

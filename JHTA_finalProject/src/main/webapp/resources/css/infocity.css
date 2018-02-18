@@ -1,0 +1,28 @@
+@CHARSET "UTF-8";
+
+        
+        .carousel-inner > .item > img,
+        .carousel-inner > .item > a > img {
+        width: 100%;
+        height: 350px;
+        margin: auto;
+        }
+        
+        div.container{
+            max-width:976px;
+        }
+        
+        div.dest-img {
+            float: left;
+            width: 220px;
+            height: 202px;
+            margin: 16px 16px 0 0;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #227d88;
+        }
+        
+        div {
+            border: 1px solid #grey;
+        }
+        

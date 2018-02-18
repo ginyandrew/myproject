@@ -1,0 +1,229 @@
+##세부일정등록
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schSendListDetailReView.js'></script>
+<style>
+  .ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  /* IE 6 doesn't support max-height
+   * we use height instead, but this forces the menu to always be this tall
+   */
+  * html .ui-autocomplete {
+    height: 100px;
+  }
+ 
+ .filebox input[type="file"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip:rect(0,0,0,0);
+  border: 0;
+}
+
+.filebox label {
+  display: inline-block;
+  padding: .5em .75em;
+  color: #999;
+  font-size: inherit;
+  line-height: normal;
+  vertical-align: middle;
+  background-color: #fdfdfd;
+  cursor: pointer;
+  border: 1px solid #ebebeb;
+  border-bottom-color: #e2e2e2;
+  border-radius: .25em;
+}
+
+/* named upload */
+.filebox .upload-name {
+  display: inline-block;
+  padding: .5em .75em;  /* label의 패딩값과 일치 */
+  font-size: inherit;
+  font-family: inherit;
+  line-height: normal;
+  vertical-align: middle;
+  background-color: #f5f5f5;
+  border: 1px solid #ebebeb;
+  border-bottom-color: #e2e2e2;
+  border-radius: .25em;
+  -webkit-appearance: none; /* 네이티브 외형 감추기 */
+  -moz-appearance: none;
+  appearance: none;
+}
+
+
+
+
+</style>
+  
+ <!-- container -->
+    <div id="container">
+          <div class="titarea">
+              <h2>강의수강 안내 발송내역</h2>
+           </div>
+         
+            #set($gb01 = $sch.sch_gb_01)
+            #set($gb02 = $sch.sch_gb_02)
+           <table width="100%" class="tb_view1">
+                <colgroup>
+                    <col width="8%" />
+                    <col width="34%" />
+                    <col width="8%" />
+                    <col width="20%" />
+                    <col width="8%" />
+                    <col width="*" />
+                </colgroup>
+                <tr>
+                    <th scope="row">구분</th>
+                    <td  class="r_line">
+                         <select  name="" class="sel" style="width:100px;background:#dddddd;" disabled>
+                            <option value="01" #if("01" == "$gb01") selected="selected"#end> 강연회 </option>
+							<option value="02" #if("02" == "$gb01") selected="selected"#end> 연수회 </option>
+                        </select>
+                         <select  name="" class="sel" style="width:160px;background:#dddddd;" disabled>
+                            #if("01" == "$!gb01")
+							<option value="01" #if("01" == "$gb02") selected="selected" #end>연구회</option>
+							<option value="02" #if("02" == "$gb02") selected="selected" #end>보수교육</option>
+							<option value="03" #if("03" == "$gb02") selected="selected" #end>Faculty Seminar</option>
+							<option value="04" #if("04" == "$gb02") selected="selected" #end>수요화상</option>
+							<option value="05" #if("05" == "$gb02") selected="selected" #end>Osstem meeting</option>
+							#else
+							<option value="01" #if("01" == "$gb02") selected="selected" #end>Basic</option>
+							<option value="02" #if("02" == "$gb02") selected="selected" #end>Advanced</option>
+							<option value="03" #if("03" == "$gb02") selected="selected" #end>Master</option>
+							<option value="04" #if("04" == "$gb02") selected="selected" #end>One-day Course</option>
+							#end 
+                        </select>
+                    </td>
+                    <th scope="row">제목</th>
+                    <td colspan="3">
+                       <div class="api_atcmp_wrap">
+                    	    <input id="" name="" style="width:400px;background:#dddddd;" disabled type="text" value="$sch.title">
+                       </div>
+                    </td>
+                </tr>
+                 <tr>
+                    <th scope="row">장소</th>
+                    <td>
+                         <input id="" name="" style="width:272px;background:#dddddd;" disabled type="text" value="$sch.place">
+                    </td>
+                     <th scope="row">주관</th>
+                    <td>
+                         <input id="" name="" style="width:150px;background:#dddddd;" disabled type="text" value="$sch.org_nm">
+                    </td>
+                     <th scope="row">담당</th>
+                    <td>
+                         <input id="" name="" style="width:150px;background:#dddddd;" disabled type="text" value="$sch.name">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">일시</th>
+                    <td colspan="5">
+                       <div class="date_input  marr20">
+                            <INPUT value="$!schDt"  type="text">
+                            <span class="search-submit" >
+                        </div>
+                       
+                         <select  name="" class="sel" style="width:70px;background:#dddddd;" disabled ">
+                            <option >$!schStaHr:00</option>
+                        </select>
+                        <select  name="" class="sel" style="width:70px;background:#dddddd;" disabled  ">
+                            <option >$!schFinHr:00</option>
+                        </select>
+                    </td>
+                   
+                 </tr>
+            </table>
+            <!-- btn box(bottom) -->
+            <div class="box_btnarea padb10">
+            	<!-- <a href="#" class="searchbtn alignr">등록</a> -->
+            </div>
+            <!-- //btn box(bottom) -->
+         	
+           
+            <table width="100%" class="tb_view1 ">
+                <colgroup>
+                    <col width="8%" />
+                    <col width="8%" />
+                    <col width="*" />
+                </colgroup>
+                <tr>
+                    <th rowspan="2" class="bor_r">발송<br>대상자</th>
+                    <td colspan="2">
+                    <input id="" type="radio" name="radio" value="" disabled><label for="" ><span><span></span></span>이름</label>  
+                        <input id="" type="radio" name="radio" value="" disabled><label for=""><span><span></span></span>그룹명</label>
+                       
+                        <div class="api_atcmp_wrap marr20">
+                    	    <input id="" name="" style="width:400px;" disabled  type="text" >
+                       </div>
+                      <!--
+                      <span class="btn_pack basic alignr"><a href="#"><em class="ico_exdown"></em>엑셀 업로드</a></span>
+                  		-->
+                    </td>
+                </tr>
+                <tr>
+                	<th class="bor_l">대상자<br>[$!totalCnt]명</th>
+                    <td  class="pad">
+                       <table width="100%" class="tb_view2">
+                          <colgroup>
+                            <col width="50px" />
+                            <col width="100px" />
+                            <col width="400px" />
+                            <col width="100px" />
+                            <col width="*" />
+                          </colgroup>
+                          <thead>
+                            <tr>
+                                <th scope="row">No.</th>
+                                <th scope="row">이름</th>
+                                <th scope="row">병의원명</th>
+                                <th scope="row">출신대학</th>
+                                <th scope="row">나이</th>
+                            </tr>
+                         </thead>
+                       </table>
+                       <div class="tb_scroll2" >
+                          <table width="100%" class="tb_view2 "> 
+                              <colgroup>
+                                <col width="50px" />
+                                <col width="100px" />
+                                <col width="400px" />
+                                <col width="100px" />
+                                <col width="*" />
+                              </colgroup>
+                                $!psnList
+                            </table>  
+                        </div>
+                     </td>
+                </tr>
+                <tr>
+                    <th rowspan="2">이미지<br>확인</th>
+                    <td colspan="2">
+						#if( $!fileId == 0)
+							첨부된 이미지가 없습니다.
+						#else 
+							<input type="hidden" name="fileId" id="fileId" style="width:50px;" value="$!fileId">
+		                    <a href="$!WEB_ROOT/file/file.do?method=download&fileId=$!fileId">
+		                    <span class="btn_pack sch gray marr20"><button type="button">이미지 다운받기</button></span>
+							</a>
+						#end
+                    </td>
+                </tr>
+            </table>
+              <!-- btn box(bottom) -->
+            <div class="box_btnarea">
+				<p class="alignr">
+		 			<span class="btn_pack basic"><button type="submit" onclick="movePage();"><em class="ico_save"></em>목록</button></span>
+				</p>
+            </div>
+             
+    </div>
+    
+    <form id="movePage" action="$!WEB_ROOT/sch/sch.do?method=schSendListSearchView" method="post"></form>
+</div>  
+<!-- //container -->

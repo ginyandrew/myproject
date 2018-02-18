@@ -1,0 +1,189 @@
+##등록일정조회-연간
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schYearSearchView.js'></script>
+
+<div id="container">
+	
+	<div class="titarea">
+	    <h2>등록일정 조회</h2>
+	</div>
+	
+	<div id="div_search_result"  style="position:absolute;background-color:white;display:none;"></div>
+	<form id="frm1" action="" method="post">
+		<input type="hidden" name="schId" id="schId" value="">
+	</form>
+	
+	
+		
+	<form id="frm2" method='post'>
+	
+	   <!-- 강연회_fs_연간 -->
+        <div style="position: absolute;" >  
+        
+            <div class="bp_calendar">
+                <div class="h_cal" style="background-color:gray;">
+                    <div class="cld_left" >
+	                    
+	                    <input type="hidden" id ="hidsch_gb_01" name="sch_gb_01" value="$!sch_gb_01">
+						<input type="hidden" id ="hidsch_gb_02" name="sch_gb_02" value="$!sch_gb_02">
+						
+						<select id="sch_gb_01" onchange="schgbChange(this.value)" class="sel" style="width:80px;  height:30px; ">
+							<option value="01" #if("01" == "$!sch_gb_01") selected="selected"#end>강연회</option>
+							<option value="02" #if("02" == "$!sch_gb_01") selected="selected"#end>연수회</option>
+						</select>
+						
+                        <select id="sch_gb_02" onchange="divChange(this.value)" class="sel" style="width:150px;  height:30px; ">
+							<option value="01">연구회</option>
+							<option value="02">보수교육</option>
+							<option value="03">Faculty Seminar</option>
+							<option value="04">수요화상</option>
+							<option value="05">Osstem meeting</option>
+						</select>
+						
+                    </div>
+                    <div class="cld_center">
+                        <a title="이전" class="sp cld_pre" href="#" onclick="prev_year('$!prev_year')"></a>
+                        <span>
+                            <input type="hidden" id ="year" value="$!year">
+							$!year년
+                        </span>
+                        <a title="다음" class="sp cld_next" href="#" onclick="next_year('$!next_year')"></a>
+                    </div>
+                    <div class="cld_chk" >
+						<a href="#" onclick="movePage('schYearSearchView');return false;"><button type=button class="on">연간</button></a>
+						<a href="#" onclick="movePage('schMonthSearchView');return false;"><button type=button>월간</button></a>
+						<a href="#" onclick="movePage('schWeekSearchView');return false;"><button type=button >주간</button></a>
+                    </div>
+                </div>
+            
+             <!--달력-->
+                <div class="cal_year">
+                    <table>
+                        #if("$sch_gb_01" == "01" && "$sch_gb_02" == "03")
+                          	
+                          	<colgroup>
+	                            <col width="2%" />
+	                            <col width="4%" />
+	                            #foreach($i in [1..12])
+	                            <col width="*" />
+	                            #end
+                        	</colgroup>
+                        	<thead>
+                        		<tr>
+	                                <th class="frst_bd" scope="col" rowspan="2" colspan="2"></th>
+	                                #foreach($i in [1..12])
+	                                	<th scope="col" colspan="2">$i월</th>
+	                                #end
+	                                <tr>
+		                            	#foreach($i in [1..12]) 
+			                            	<th scope="col">확정</th>
+		    	                            <th scope="col">예비</th>
+		                            	#end
+		                            </tr>
+	                            </tr>
+                        	</thead>
+                        #else
+	                        <colgroup>
+	                            <col width="6%" />
+	                            #foreach($i in [1..11])
+	                            <col width="*" />
+	                            #end
+                        	</colgroup>    
+	                        <thead>
+		                            <tr>
+		                                <th class="frst_bd" scope="col"></th>
+		                                #foreach($i in [1..12])
+		                                	<th scope="col">$i월</th>
+		                                #end
+		                            </tr>
+	                        </thead>
+                        #end
+	                        
+
+                            <!-- 이름이 들어가는 경우 class="dday"가 들어간다.
+                            <td class="dday"><a href="#">손영휘</a></td>
+                            -->
+
+                       		<!-- faculty seminar 인 경우 24개, 그 외엔 12개씩 돌아감. -->
+                       		
+	                        <tbody>
+	                        	
+	                            #if("$sch_gb_01" == "01" && "$sch_gb_02" == "03")	<!-- (1) Faculty Seminar 의 경우 -->
+		                            #foreach($i in [1..$!maxTrCnt])		<!-- 4대신 list의 최대값이 들어가야 한다.-->
+			                             <tr>
+				                             #if($i == 1)
+				                             	<th rowspan="$!maxTrCnt">발표자</th>		
+				                             #end
+			                            	 <th>$i</th>
+			                                 #foreach ($month in [1..24])
+				                                  #if($month % 2 == 0)
+						                             #set($order = $i + "_" + $month + "_" + '02')  	 
+				                                  #else
+						                             #set($order = $i + "_" + $month + "_" + '01')  	 			                                  
+				                                  #end
+				                               	  <td>
+				                               	  #foreach($mbr in $!mbrList)  
+					                               	  #if($mbr.get("TAG") == $order)
+					                               	  <a href="#" onclick="moveSchDetail($mbr.get("SCH_ID"));return false;">
+					                               	  <span>$mbr.get("NAME")</span></a>
+					                               	  #end
+				                               	  #end
+				                               	  </td>
+			                            	 #end
+	
+										</tr>
+									#end
+		                            
+		                        #elseif ("$sch_gb_01" == "01" && "$sch_gb_02" == "01") <!-- (2)강연회의 연구회인 경우-->
+		                            #if($!placeList)
+		                            	#foreach($place in $!placeList)
+		                            		<tr>
+		                            			<th>$place.get("PLACE")</th>
+		                            			#foreach ($i in [1..12]) <!-- 달 -->
+		                            			<td>
+		                            				#set($placeCd = $i + "_" + $place.get("PLACENM"))
+		                            				#foreach($sch in $!schList)
+			                            				#if($placeCd == $sch.get("TAG") and $sch.get("TAG"))
+			                            					<a href="#" onclick='getPopup(this);return false;'>
+			                            						<span>$sch.get("CNT")</span>
+			                            					<a>
+			                            					<input type="hidden" name="theMonth" value="$sch.get("THEMONTH")">
+			                            					<input type="hidden" name="placeNm" value="$sch.get("PLACE")">
+			                            				#end 
+		                            				#end
+		                            			</td>
+		                            			#end
+		                            		</tr>
+		                            	#end
+		                            #end		                            
+	                            #else		<!-- 그 외 모든 경우 -->
+									
+									<!-- 최대 5명까지 있는 줄이 있다고 할 때 -->
+									#if($!maxTrCnt)
+										#foreach($row in [1..$!maxTrCnt]) <!-- 순번: 각 달 중 가장 큰 숫자가 있는지 찾아와야 한다.  -->
+				                            <tr>
+				                               <th>$row</th>		
+				                               #foreach ($i in [1..12]) <!-- 달 -->
+				                               <td>
+				                               	   #set($order = $i + "_" + $row)
+				                               	   #foreach($sch in $!schList)
+				                               	   		#if($sch.get("TAG") == $order and $sch.get("TAG"))
+				                               	   		<a href="#" onclick="moveSchDetail($sch.get("SCH_ID"));return false;"><span>$sch.get("TITLE")</span></a>
+				                               	   		#end
+				                               	   #end 
+				                               </td>
+				                               #end
+				                            </tr>
+										#end
+									#end
+	                            #end
+	                        </tbody>
+                    </table>
+                </div>
+                <!-- //달력 -->
+            </div>
+        
+        </div>
+        <!-- 강연회_fs_연간 -->
+        </form>
+</div>
+<!--// container -->

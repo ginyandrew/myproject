@@ -1,0 +1,440 @@
+## 세부일정등록
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schDetailRegistView.js'></script>
+<style>
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  /* IE 6 doesn't support max-height
+   * we use height instead, but this forces the menu to always be this tall
+   */
+  * html .ui-autocomplete {
+    height: 100px;
+  }
+</style>  
+<!-- container -->
+<div id="container">
+	
+	
+	<div class="titarea">
+		<h2>
+		#if($!temp_yn == "N")
+			세부 일정 등록		
+		#else
+			일정 탬플릿 등록
+		#end
+		</h2>
+	</div>
+	
+	<!-- hidden values -->
+	<form id="frm1" method="post" action="">
+	<input type="hidden" value="$!sch_gb_01" name="sch_gb_01" id="schGb1">
+	</form>
+	<!-- //hidden values -->
+	
+	
+	<form id="frm2" method="post" action="$!WEB_ROOT/sch/sch.do?method=saveMultiData">
+	<input type="hidden" name="sch_gb_01" id="schGb" value="$!sch_gb_01">
+	<input type="hidden" name="temp_yn" id="temp_yn" value="$!temp_yn">
+	<input type="hidden" name="sch_no_cnt" id="sch_no_cnt" value="">
+	<input type="hidden" name="reg_id" value="$!reg_id">
+	<input type="hidden" id="defaultName" value="$!name">
+	<input type="hidden" id="defaultOrgNm" value="$!org_nm">
+	
+	<!-- table (top) -->
+	<table width="100%" class="tb_view1">
+		
+		<colgroup>
+			<col width="10%" />
+			<col width="35%" />
+			<col width="8%" />
+			<col width="20%" />
+			<col width="8%" />
+			<col width="*" />
+		</colgroup>
+	
+		
+		<tr>
+			<th scope="row">구분</th>
+			<td class="r_line">
+				
+				<select id="sch_gb_01" class="sel" style="width:100px;" onchange="schgb1Change(this.value)">
+					<option value="01" #if("01" == "$!sch_gb_01") selected="selected"#end> 강연회 </option>
+					<option value="02" #if("02" == "$!sch_gb_01") selected="selected"#end> 연수회 </option>
+				</select>
+				
+				<select id="sch_gb_02" name="sch_gb_02" class="sel" style="width:210px;">
+					
+					#if("01" == "$!sch_gb_01")
+					<option value="01" selected="selected">연구회</option>
+					<option value="02">보수교육</option>
+					<option value="03">Faculty Seminar</option>
+					<option value="04">수요화상</option>
+					<option value="05">Osstem meeting</option>
+					#else
+					<option value="01" selected="selected">Basic</option>
+					<option value="02">Advanced</option>
+					<option value="03">Master</option>
+					<option value="04">One-day Course</option>
+					#end 
+					
+				</select>
+			</td>
+			
+			<th scope="row">제목</th>
+			<td colspan="3">
+				<div class="api_atcmp_wrap">
+					<input id="title" name="title" style="width:400px;" type="text" value="" onkeyup="searchTitle(this);">
+				</div>
+			</td>
+			
+		</tr>
+		
+		
+		<tr>
+			<th scope="row">장소</th>
+			<td>  
+				<input id="place" name="place" style="width:300px;" type="text" value="">
+			</td>
+			
+			<th scope="row">주관</th>
+			<td>
+				<input id="finalOrgNm" type="text" name="org_nm" style="width:130px;" value="$!org_nm">
+				<input id="orgCd" type="hidden" name="org_cd" value="$!org_cd">
+			</td>
+			
+			<th scope="row">담당</th>
+			<td>
+				<input id="writerName" name="name" style="width:130px;" type="text" value="$!name">
+				<input id="writerSabun" type="hidden" name="sabun" value="$!sabun">
+			</td>
+		</tr>
+		
+		
+		
+		
+	<!-- 강연회 상단 테이블 -->
+	<input type="hidden" id="sch_sta_dt" name="sch_sta_dt" value="">
+	<input type="hidden" id="sch_fin_dt" name="sch_fin_dt" value="">
+	#if("01" == "$!sch_gb_01")
+		#if($!temp_yn == "N")	
+		<tr>
+			<th scope="row">일시</th>
+			<td colspan="5">
+				
+				<div class="date_input marr20">
+					<input type="text" id="gb01Date" name="dates" placeholder="yyyy-mm-dd">
+					<span class="search-submit"/>
+				</div>
+			
+				<select id="sch_sta_time" class="sel" style="width:70px;">
+					#foreach($hr in $!hr)
+						<option value="$hr.comm_cd" #if($hr.comm_cd == '00') selected="selected"#end>$hr.comm_cd_nm:00</option>
+					#end
+				</select>
+				<select id="sch_fin_time" class="sel" style="width:70px;">
+					#foreach($hr in $!hr)
+						<option value="$hr.comm_cd" #if($hr.comm_cd == '00') selected="selected"#end>$hr.comm_cd_nm:00</option>
+					#end
+				</select>
+			</td>
+		</tr>
+		#end
+	#end
+	<!-- // 강연회 상단테이블 -->
+	
+	
+	#if("02" == "$!sch_gb_01") 
+	<!-- 연수회 상단 테이블 -->
+		<tr>
+			<th scope="row">Director</th>
+			<td id="sch02drts" colspan="3">
+				<div class="api_atcmp_wrap" >
+					<input id="director"  style="width:300px;" type="text" value="" onkeyup="autoSearcDir(this)">
+				</div>
+				<!-- 여기 밑에 이름들이 추가로 붙는다. -->
+			</td>
+	
+			<th scope="row">회차</th>
+			<td>
+				<select id="gb02Cnt" class="sel" style="width:100px;" onchange="changeTotalCntNo(this.value);">
+					#foreach($dt in [1 .. 50])
+						<option value="$dt" #if ($dt == 1) selected="selected" #end>$dt 회차</option>
+					#end
+				</select>
+			</td>
+		</tr>
+	
+		<tr>
+			<th scope="row">Faculty</th>
+			<td id="sch02fct" colspan="5">
+				<div class="api_atcmp_wrap">
+					<input id="faculty" style="width:300px;" type="text" value="" onkeyup="autoSearcFct(this)">
+				</div>
+			</td>
+		</tr>
+	#end	
+	<!-- // 연수회 상단 테이블 -->
+
+
+	</table>
+	<!-- // table (top) -->
+	
+	
+	
+	
+	
+
+	<!-- btn box(bottom) -->
+	<div class="box_btnarea padb10">
+		<!-- <a href="03_01_세부일정등록2.html" class="searchbtn alignr">등록</a> -->
+	</div>
+	<!-- // btn box(bottom) -->
+	
+	
+	
+	
+	<!-- table (bottom) -->
+	
+	 
+	<!-- 강연회 하단테이블 -->
+	#if("01" == "$!sch_gb_01")
+	
+	<input type="hidden" value="1">
+	<table width="100%" class="tb_list04 ">
+		<colgroup>
+			<col width="10%" />
+			<col width="10%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="8%" />
+			<col width="*" />
+			<col width="12%" />
+			<col width="3%" />
+			<col width="3%" />
+		</colgroup>
+		
+
+		<thead>
+			<tr>
+				<th scope="row" colspan="2">시간</th>
+				<th scope="row" colspan="7">내용</th>
+			</tr>
+			<tr>
+				<th scope="row" rowspan="2">시작</th>
+				<th scope="row" rowspan="2">종료</th>
+				<th scope="row" colspan="2">Faculty</th>
+				<th scope="row" rowspan="2">Moderator</th>
+				<th scope="row" rowspan="2" colspan="4">주   제</th>
+			</tr>
+			<tr>
+				<th scope="row">확정</th>
+				<th scope="row">예비</th>
+			</tr>
+		</thead>
+		
+		
+		<tbody id="sch01List">
+	
+			<tr>
+				<input type="hidden" name="" value="">
+				<td>
+					<select style="width:35px; #if($!temp_yn == "Y") background:#dddddd; #end" #if($!temp_yn == "Y") disabled #end>
+						#foreach($hr in $!hr)
+							<option value="$hr.comm_cd" #if($hr.comm_cd == '00') selected="selected"#end>$hr.comm_cd_nm</option>
+						#end
+					</select>:
+					
+					<select style="width:35px; #if($!temp_yn == "Y") background:#dddddd; #end"  #if($!temp_yn == "Y") disabled #end>
+						#foreach($min in $!min)
+							<option value="$min.comm_cd" #if($min.comm_cd == '00') selected="selected"#end>$min.comm_cd_nm</option>
+						#end
+					</select>
+					<input type="hidden" name="" value="">
+				</td>
+				
+				<td>
+					<select style="width:35px; #if($!temp_yn == "Y") background:#dddddd; #end" #if($!temp_yn == "Y") disabled #end>
+						#foreach($hr in $!hr)
+						<option value="$hr.comm_cd" #if($hr.comm_cd == '00') selected="selected"#end>$hr.comm_cd_nm</option>
+					#end
+					</select>:
+					
+					<select style="width:35px; #if($!temp_yn == "Y") background:#dddddd; #end"  #if($!temp_yn == "Y") disabled #end>
+						#foreach($min in $!min)
+							<option value="$min.comm_cd" #if($min.comm_cd == '00') selected="selected"#end>$min.comm_cd_nm</option>
+						#end
+					</select>
+					<input type="hidden" name="" value="">
+				</td>
+				
+				<td>
+					<input name="" style="width:50px;" type="text" value="" class="mbr01" onkeyup="autoSearchName(this)">
+				</td>  
+				<td>
+					<input name="" style="width:50px;" type="text" value="" class="mbr02" onkeyup="autoSearchName(this)">
+				</td>
+				<td>
+					<input name="" style="width:50px;" type="text" value="" class="mbr03" onkeyup="autoSearchName(this)">
+				</td>
+				
+				<td>
+					<input name="" style="width:96%;" type="text" value="">
+				</td>
+				<td> 
+                	<select  name="" class="sel" style="width:100px;  height:30px; ">
+                         <option selected value>--연제주제--</option>
+                        #foreach($sub in $!sub)
+                        <option value="$sub.comm_cd" >$sub.comm_cd_nm</option>
+                        #end
+                    </select>
+                    <input type="hidden" name="" value="">
+                </td>
+				 
+				<td>
+					<button type="button" class="plus" onclick="addRow(this)"><span class="hidden">추가</span></button>
+				</td>
+				
+				<td>
+					<button type="button" class="minus" onclick="deleteRow(this)"><span class="hidden">삭제</span></button>
+				</td>
+			</tr>
+			
+		</tbody>
+	 
+	</table>
+	<!-- // 강연회 하단테이블 -->
+	#end
+
+
+
+	#if("02" == "$!sch_gb_01")
+	<!-- 연수회 하단테이블 -->
+	<input type="hidden" value="2">
+	<div id="ckList" class="tab_style2">
+		<ul>
+			<!-- <li class="on"><a href="#" id="ck1">1회차</a></li> -->
+			#foreach($liNo in [1 .. 50])
+				<li #if ($liNo == 1) class="on" #end>
+				<a href="ck_$liNo" id="ck$liNo" onclick="chgCkTab(this.id);return false;"
+					#if ($liNo != 1) style="display:none;" #end
+				>$liNo회차</a></li>
+			#end
+		</ul>
+	</div>
+	
+	<div id="sch02List" class="TabbedPanelsContent">
+	
+		#foreach($tblNo in [1 .. 50])
+			<table width="100%" class="tb_view1 bottomTbl" id="tb$tblNo" #if($tblNo !=1) style="display:none;" #end>
+				
+				#set($dtoNo = $tblNo - 1)
+				<input type="hidden" value="$tblNo">	<!-- dtl의 no -->
+				<input type="hidden" value="">			<!-- dtl의 sta_dt -->
+				<input type="hidden" value="">			<!-- dtl의 fin-dt -->
+				
+				<colgroup>
+					<col width="14%" />
+					<col width="*" />
+				</colgroup>
+				
+				<tr #if($!temp_yn == "Y") style="display:none;" #end>
+					<th>회차 일시</th>
+					<td class="alignl">
+						
+						<div class="date_input marr20">
+							<input type="text" name="dates">
+							<span id="dateIcon$tblNo" class="search-submit">
+						</div>
+						
+						<select class="sel" style="width:70px;">
+							#foreach($hr in $!hr)
+								<option value="$hr.comm_cd" #if($hr.comm_cd == '0') selected="selected"#end>$hr.comm_cd_nm:00</option>
+							#end
+						</select> ~
+						<select class="sel" style="width:70px;">
+							#foreach($hr in $!hr)
+								<option value="$hr.comm_cd" #if($hr.comm_cd == '0') selected="selected"#end>$hr.comm_cd_nm:00</option>
+							#end
+						</select> 
+						
+						<select class="sel" style="width:100px;  height:30px;float:right; ">
+	                        <option selected value>--연제주제--</option>
+	                        #foreach($sub in $!sub)
+	                        <option value="$sub.comm_cd" >$sub.comm_cd_nm</option>
+	                        #end
+	                    </select>
+	                    
+					</td>
+				</tr>
+				
+				<tr>
+					<th>Director</th>
+					<td class="alignl">
+						<div class="api_atcmp_wrap" >
+							<input type="text" onkeyup="autoSearcDtlDir(this);">
+						</div>
+						<!-- 여기 밑에 이름들이 추가로 붙는다. -->
+					</td>
+				</tr>
+				
+				<tr>
+					<th>강의 내용</th>
+					<td>
+						<textarea name="" cols="" rows="20">$tblNo회차</textarea>
+						<input type="hidden" value="">
+					</td>
+				</tr>
+				
+				<tr>
+					<th>교육자료 등록</th>
+					<td>
+						<textarea  cols="" rows="5"></textarea>
+					</td>
+				</tr>
+				
+				<tr>
+					<th>문제 등록</th>
+					<td>
+						<textarea  cols="" rows="5"></textarea>
+					</td>
+				</tr>
+		
+			</table>
+		
+		
+		#end
+		
+		
+		
+	</div>
+	
+	
+	
+	
+	#end
+	<!-- // 연수회 하단테이블 -->
+	<!-- //table (bottom) -->
+	</form>
+	
+	
+	
+	
+	
+	<!-- btn box(bottom) -->
+	<div class="box_btnarea">
+		<p class="alignr">
+			<span class="btn_pack basic"><button id="saveBtn" onclick="submitForm();"><em class="ico_save"></em>저장</button></span>
+			<!-- <span class="btn_pack basic"><button><em class="ico_delete"></em>삭제</button></span> -->
+		</p>
+	</div>
+	<!-- //btn box(bottom) -->
+	
+		 
+		 
+	
+	
+</div> 
+<!-- //container -->

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="clip2.web.storebenefit.WebStoreDao">
+
+	<!-- 메뉴 정보 -->
+    <select id="getMenuListByShopId" parameterType="String" resultType="String">
+    	select	/* [WebStoreDao.xml].[clip2.web.storebenefit.WebStoreDao.getMenuListByShopId].[01] 변경일자(20160810) */ 
+    	menu_grp_nm
+		from tbl_ms_menu_cpn
+		where shop_id = #{value}
+		group by menu_grp_nm
+    </select>
+
+	<select id="getMenusByMenuCategory" parameterType="map" resultType="map">
+		select /* [WebStoreDao.xml].[clip2.web.storebenefit.WebStoreDao.getMenusByMenuCategory].[02] 변경일자(20160810) */
+			menu_nm		as menuName, 
+			item_cost	as itemCost
+		from tbl_ms_menu_cpn
+		where shop_id =#{shopId}
+		and menu_grp_nm = #{category}
+	</select>
+	
+	<select id="getShopInfoByShopId" parameterType="String" resultType="com.kt.clip2.web.storebenefit.vo.ShopVO">
+		select /* [WebStoreDao.xml].[clip2.web.storebenefit.WebStoreDao.getShopInfoByShopId].[03] 변경일자(20160810) */
+			shop_id as shopId, 
+			shop_nm as shopName, 
+			ms_type as msType, 
+			category, 
+			convert(char(10), reg_dt, 121) as regDt, 
+			convert(char(10), modify_dt, 121) as modifyDt 
+		from tbl_ms_meta 
+		where shop_id = #{value};
+	</select>
+	
+	<select id="getClipPartnerShopInfo" parameterType="String" resultType="String">
+		select /* [WebStoreDao.xml].[clip2.web.storebenefit.WebStoreDao.getClipPartnerShopInfo].[04] 변경일자(20160823) */
+			   shop_id
+		  from tbl_stamp_shop 
+		 where shop_id = #{shopId, jdbcType=VARCHAR}
+	</select>
+	
+	<insert id="insertBranchLog" parameterType="map">
+		INSERT /* [WebStoreDao.xml].[clip2.web.storebenefit.WebStoreDao.insertBranchLog].[05] 변경일자(20160823) */
+   		  INTO BRANCH_LOG (BRANCH_ID, SHOP_ID, USER_ID, CLIPUSE_YN,REG_DT, REG_TM) 
+ 		VALUES (
+ 				 #{branchCd, jdbcType=VARCHAR},
+ 			     #{shopId, jdbcType=VARCHAR}, 
+ 			     #{custId, jdbcType=VARCHAR}, 
+ 			     #{clipuseYN, jdbcType=VARCHAR},
+ 			     CONVERT(VARCHAR(30), GETDATE(), 112), 
+ 			     CONVERT(VARCHAR(30), GETDATE(), 108)
+ 			    )
+	</insert>
+</mapper>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!DOCTYPE tiles-definitions PUBLIC
+       "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
+       "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
+<!-- http://tiles.apache.org/framework/tutorial/basic/pages.html -->
+<tiles-definitions>
+	<!-- base teaplate 정의 -->
+	<definition name="base" template="/WEB-INF/views/template/base.jsp">
+		<put-attribute name="title" value="" />
+		<put-attribute name="header" value="/WEB-INF/views/template/header.jsp" />
+		<put-attribute name="right-menu" value="/WEB-INF/views/template/right-menu.jsp" />
+		<put-attribute name="contents" value="" />
+		<put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp" />
+	</definition>
+
+	<!-- @RequestMapping("/xx.do")public String yy(){return "main";} -->
+	<definition name="maint" extends="base">
+		<put-attribute name="title" value="TravelMaker:: Main" />
+		<put-attribute name="contents" value="/WEB-INF/views/contents/maint.jsp" />
+	</definition>
+	
+	<definition name="mainf" extends="base">
+		<put-attribute name="title" value="TravelMaker:: Main" />
+		<put-attribute name="contents" value="/WEB-INF/views/contents/mainf.jsp" />
+	</definition>
+	
+	<definition name="planlist" extends="base">
+		<put-attribute name="title" value="TravelMaker:: Plan - List" />
+		<put-attribute name="contents" value="/WEB-INF/views/contents/planlist.jsp" />
+	</definition>
+	<definition name="plandetail" extends="base">
+		<put-attribute name="title" value="TravelMaker:: Plan - Detail" />
+		<put-attribute name="contents" value="/WEB-INF/views/contents/plandetail.jsp" />
+	</definition>
+	<definition name="infolist" extends="base">
+		<put-attribute name="title" value="TravelMaker:: Info - List" />
+		<put-attribute name="contents" value="/WEB-INF/views/contents/infolist.jsp" />
+	</definition>
+	<definition name="infocity" extends="base">
+		<put-attribute name="title" value="TravelMaker:: Info - City" />
+		<put-attribute name="contents" value="/WEB-INF/views/contents/infocity.jsp" />
+	</definition>
+	<definition name="infodest" extends="base">
+		<put-attribute name="title" value="TravelMaker:: Info - Dest" />
+		<put-attribute name="contents" value="/WEB-INF/views/contents/infodest.jsp" />
+	</definition>
+	<definition name="host" extends="base">
+		<put-attribute name="title" value="TravelMaker:: Admin Page" />
+		<put-attribute name="contents" value="/WEB-INF/views/contents/host.jsp" />
+	</definition>
+	<definition name="mypage" extends="base">
+		<put-attribute name="title" value="TravelMaker:: My Page" />
+		<put-attribute name="contents" value="/WEB-INF/views/contents/mypage.jsp" />
+	</definition>
+	
+	<!-- planmake은 tiles를 이용하지 않으므로 분리함 -->
+	<!-- <definition name="planmake">
+		<put-attribute name="contents" value="/WEB-INF/views/contents/planmake.jsp" />
+	</definition> -->
+</tiles-definitions>

@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="kr.co.jhta.dao.UserDAO">	
+
+	<!-- User 회원 테이블 -->
+	<insert id="addUser" parameterType="kr.co.jhta.domain.UserVO">
+		insert into db_user
+	 	(no, name, email, password, gender, reg_date)
+	 	values
+	 	(user_seq.nextval, #{name}, #{email}, #{password}, #{gender}, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'))	
+	</insert>
+	
+	<select id="getUser" resultType="kr.co.jhta.domain.UserVO">
+		select
+			no, 
+			name, 
+			email, 
+			password, 
+			gender, 
+			reg_date 		as regDate, 
+			is_dropped 		as isDropped, 
+			point
+		from
+			db_user
+		order by
+			no			
+	</select>
+	
+	<select id="getUserByNo" parameterType="int" resultType="kr.co.jhta.domain.UserVO">
+		select
+			no, 
+			name, 
+			email, 
+			password, 
+			gender, 
+			reg_date 		as regDate, 
+			is_dropped 		as isDropped, 
+			point
+		from
+			db_user
+		where 
+			no = #{no}
+	</select>
+	
+	<delete id="deleteUserByNo" parameterType="int">
+		delete from db_user
+		where no = #{no}
+	</delete>
+	
+	
+	
+	
+	<!-- Message //운영자가 사용자에게 보내는 메세지 테이블 -->
+	<insert id="addMessage" parameterType="kr.co.jhta.domain.MessageVO">
+		INSERT INTO DB_MESSAGE
+	 	(NO, SEND_TIME, DATA, USER_NO)
+	 	VALUES
+	 	(MEMO_SEQ.NEXTVAL, TO_CHAR(SYSDATE, 'YYYYMMDDHH24MISS'), #{data}, #{user.no})
+	</insert>
+	
+	<select id="getMessage" resultType="kr.co.jhta.domain.MessageVO">
+		select
+			no, 
+			send_time 		as sendTime, 
+			data, 
+			user_no 		as "user.no"
+		from
+			db_message
+		order by
+			no			
+	</select>
+	
+	<select id="getMessageByNo" parameterType="int" resultType="kr.co.jhta.domain.MessageVO">
+		select
+			no, 
+			send_time 		as sendTime, 
+			data, 
+			user_no 		as "user.no"
+		from
+			db_message
+		where 
+			no = #{value}
+	</select>
+	
+	<delete id="deleteMessageByNo" parameterType="int">
+		delete from db_message
+		where no = #{no}
+	</delete>
+	
+	
+	
+	
+	<!-- Clipboard //클립보드 (여행지 장바구니에 담기) 테이블 -->
+	<insert id="addClipboard" parameterType="kr.co.jhta.domain.ClipboardVO">
+		insert into db_clipboard
+	 	(user_no, dest_no)
+	 	values
+	 	(#{user.no},#{dest.no})	
+	</insert>
+	
+	<select id="CountClipboardByDestno" parameterType="int" resultType="int">
+		select count(*)
+		from
+			db_clipboard
+		where 
+			dest_no = #{value}		
+	</select>
+	
+	<select id="getClipboardByUserno" parameterType="int" resultType="kr.co.jhta.domain.ClipboardVO">
+		select
+			user_no 		as "user.no", 
+			dest_no 		as "dest.no"
+		from
+			db_clipboard
+		where 
+			dest_no = #{value}
+	</select>
+	
+	<delete id="deleteClipboardByDestno" parameterType="int">
+		delete from db_clipboard
+		where dest_no = #{value}
+	</delete>
+
+
+
+	
+	<!-- 용규 -->
+	
+	<!-- 진영 -->
+	<!-- 특정 회원이 특정 날짜에 포인트를 적립했으면 1, 안했으면 0을 반환 -->
+	<select id="checkUserPointByMsg" parameterType="map" resultType="int">
+		select count(*)
+		from db_message
+		where user_no = #{userno}
+		and data like #{thedate}||'%'		 
+	</select>
+	
+	<!-- 특정 회원에게 당일 날짜에 100포인트 적립 -->
+	<update id="addPointOnUser" parameterType="int">
+		update db_user
+		set
+		  point = point+100
+		where no = #{value}
+	</update>
+	
+	<!-- 특정 회원의 클립보드, 리뷰수,일정수 반환  -->
+	<select id="getClipCntByUserNo" parameterType="int" resultType="int">
+		select 
+			count(*)
+		from
+			db_clipboard
+		where 
+			user_no = #{value}
+	</select>	
+	<select id="getPlanCntByUserNo" parameterType="int" resultType="int">
+		select 
+			count(*)
+		from
+			db_plan
+		where
+			user_no = #{value}
+	</select>	
+	<select id="getReviewCntByUserNo" parameterType="int" resultType="int">
+		select 
+			count(*)
+		from
+			db_review
+		where
+			user_no = #{value}
+	</select>
+	
+	
+	
+	<!-- 성인 -->
+	<select id="getUserByEmail" parameterType="string" resultType="kr.co.jhta.domain.UserVO">
+		SELECT
+			NO as no
+			,NAME as name
+			,EMAIL as email
+			,PASSWORD as password
+			,GENDER as gender
+			,REG_DATE as regdate
+			,POINT as point 
+		FROM
+			USER_VIEW
+		WHERE
+			EMAIL=#{value}
+	</select>
+	<select id="getRankedMessage" parameterType="map" resultType="kr.co.jhta.domain.MessageVO">
+	SELECT
+		NO
+		,USER_NO as "user.no"
+		,SEND_TIME as sendTime
+		,DATA as data
+	FROM (
+		SELECT
+			ROW_NUMBER() OVER (ORDER BY SEND_TIME DESC) AS RANK
+			,NO
+			,USER_NO
+			,SEND_TIME
+			,DATA as data
+		FROM
+			DB_MESSAGE
+		WHERE
+			USER_NO = #{USER_NO}
+	)
+	WHERE
+		RANK >= #{START}
+	AND
+		RANK &lt;= #{END}
+	ORDER BY
+		RANK ASC
+	</select>
+	<select id="getOrderedUser" parameterType="map" resultType="kr.co.jhta.domain.UserVO">
+		SELECT
+			NO, 
+			NAME, 
+			EMAIL, 
+			PASSWORD, 
+			GENDER, 
+			REG_DATE 		as regDate, 
+			IS_DROPPED 		as isDropped, 
+			POINT
+		FROM
+			DB_USER
+		ORDER BY
+		<choose>
+			<when test="ORDER_BY == 'NAME'.toString()">
+				NAME
+			</when>
+			<when test="ORDER_BY == 'EMAIL'.toString()">
+				EMAIL
+			</when>
+			<when test="ORDER_BY == 'GENDER'.toString()">
+				GENDER
+			</when>
+			<when test="ORDER_BY == 'REGDATE'.toString()">
+				REGDATE
+			</when>
+			<when test="ORDER_BY == 'POINT'.toString()">
+				POINT
+			</when>
+			<otherwise>
+				NO
+			</otherwise>
+		</choose>
+		<if test="ORDER_TYPE == 'DESC'.toString()">
+			DESC			
+		</if>	
+	</select>
+	<update id="dropUserByNo" parameterType="int">
+		UPDATE
+			DB_USER
+		SET
+			IS_DROPPED = 'T'
+		WHERE
+			NO = #{value}
+	</update>
+	<update id="updateUser" parameterType="kr.co.jhta.domain.UserVO">
+		UPDATE
+			DB_USER
+		<set>
+			<if test="name != null">NAME = #{name},</if>
+			<if test="email != null">EMAIL = #{email},</if>
+			<if test="password != null">PASSWORD = #{password},</if>
+			<if test="gender != null">GENDER = #{gender},</if>
+			<if test="point &gt; -1">POINT = #{point},</if>
+		</set>
+		WHERE
+			NO = #{no}
+	</update>
+	
+	<!-- 주호 -->
+	
+	<!-- 지훈 -->
+	<select id="getUserPlanNo" parameterType="int" resultType="int">	
+		select 
+			p.no 		as planNo 
+		from 
+			db_user u, 
+			db_plan p
+		where u.no = p.user_no
+		and u.no = #{value}
+		group by p.no
+	</select>
+	
+	<select id="getPlaceDetailName" parameterType="int" resultType="hashmap">
+		select 
+			d.name 			as placename, 
+			ci.filename 	as cityfilename
+		from 
+			db_plan p, 
+			db_plan_details pd, 
+			db_destination d, 
+			db_city c, 
+			db_city_img ci 
+		where p.no = pd.plan_no
+		and pd.dest_no = d.no
+		and d.city_no = c.no
+		and c.no = ci.city_no
+		and p.no = #{value}
+	</select>
+	
+	<select id="getMyClipboard" parameterType="int" resultType="kr.co.jhta.domain.DestVO">
+		SELECT 
+		  D.NO
+		  ,D.NAME
+		FROM
+		  DB_CLIPBOARD C
+		  ,DB_DESTINATION D
+		WHERE
+		  C.USER_NO = #{value}
+		AND C.DEST_NO = D.NO
+	</select>
+	
+	
+	
+	<!-- 명신 -->
+	
+	
+	
+</mapper>

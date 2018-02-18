@@ -1,0 +1,164 @@
+##강의신청 관리 - 신청한 원장 개인정보 뷰
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schResultManualRegistView.js'></script>
+<style>
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  /* IE 6 doesn't support max-height
+   * we use height instead, but this forces the menu to always be this tall
+   */
+  * html .ui-autocomplete {
+    height: 100px;
+  }
+</style>  
+ <!-- container -->
+    <div id="container">
+          <div class="titarea">
+              <h2>강의신청 관리 수동등록</h2>
+           </div>
+         <input id="gb01" type="hidden" value="$!gb01">
+         
+         <form id="frm1" method="post" action="$!WEB_ROOT/sch/sch.do?method=insertSchReg">
+         	<input id="schId" name="sch_id" type="hidden" value="">
+         	<input id="psnId" name="psn_id" type="hidden" value="">
+         	<input id="pres_Yn" name="pres_yn" type="hidden" value="">
+         	<input id="spk_Yn" name="hope_spk_yn" type="hidden" value="">
+         	<input id="sabun" name="sal_emp_no" type="hidden" value="">
+         	<input id="selfYn" name="self_yn" type="hidden" value="N">
+         	<input id="restYn" name="rest_yn" type="hidden" value="N">
+         </form>  
+         
+           <table width="100%" class="tb_view1">
+                <colgroup>
+                    <col width="8%" />
+                    <col width="36%" />
+                    <col width="8%" />
+                    <col width="*" />
+                </colgroup>
+                <tr>
+                    <th scope="row">구분</th>
+                    <td  class="r_line">
+                         <select  name="" class="sel" style="width:100px;background:#dddddd;" disabled>
+                            <option value="01" selected="selected">강연회</option>
+                            <option value="02">연수회</option>
+                        </select>
+                         <select  name="" class="sel" style="width:180px;background:#dddddd;" disabled>
+                            <option value="101" selected="selected">연구회</option>
+							<option value="102">보수교육</option>
+							<option value="103">Faculty Seminar</option>
+							<option value="104">수요화상</option>
+							<option value="105">Osstem meeting</option>
+							<option value="201" selected="selected">Basic</option>
+							<option value="202">Advanced</option>
+							<option value="203">Master</option>
+							<option value="204">One-day Course</option>
+                        </select>
+                    </td>
+                    <th scope="row">제목</th>
+                    <td>
+                    	 <div class="api_atcmp_wrap">
+                    	    <input id="title" name="title" style="width:400px;" type="text" onkeyup="searchTitle(this);">
+                       </div>
+                    </td>
+                </tr>
+                 <tr>
+                    <th scope="row">장소</th>
+                    <td>
+                    <input id="place" name="place" style="width:300px;background:#dddddd;" disabled type="text" value="">
+                    </td>
+                    <th scope="row">주관</th>
+                    <td>
+                    <input id="orgNm" type="text" style="width:150px;background:#dddddd;" disabled value="">
+                    </td>
+                    
+                </tr>
+                <tr>
+                    <th scope="row">일시</th>
+                    <td >
+                        <span class="marr20 " id="date"></span> <span class="bg_l_left" id="time"> </span>
+                    </td>
+                    <th scope="row">담당</th>
+                    <td>
+                    <input id="name" style="width:150px;background:#dddddd;" disabled  type="text" value="">
+                    </td>
+                 </tr>
+            </table>
+            <!-- btn box(bottom) -->
+            <div class="box_btnarea padb10">
+            	<a href="#" class="searchbtn alignr" onclick="registPsn();">등록</a>
+            </div>
+            <!-- //btn box(bottom) -->
+         	
+           
+            <table width="100%" class="tb_view1" id="psnForm" style="display:none;">
+                <colgroup>
+                    <col width="13%" />
+                    <col width="30%" />
+                    <col width="13%" />
+                    <col width="*" />
+                </colgroup>
+                <tr>
+                    <th scope="row">성명</th>
+                    <td  class="r_line">
+                         <div class="api_atcmp_wrap" >
+                    	    <input id="psnName" name="allName" style="width:200px;" type="text" onkeyup="autoSearchName(this)";>
+                       		 
+                         </div>
+                    </td>
+                    <th scope="row">연락처</th>
+                    <td>
+                    <input id="phone" name="phone" style="width:200px;background:#dddddd;" disabled type="text" value="">
+                    </td>
+                </tr>
+                 <tr>
+                    <th scope="row">병의원명</th>
+                    <td>
+                    <input id="hosname" name="hosname" style="width:200px;background:#dddddd;" disabled type="text" value="">
+                    </td>
+                    <th scope="row">병원주소</th>
+                    <td>
+                    <input id="addr" name="addr" style="width:400px;background:#dddddd;" disabled type="text" value="">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">E-mail</th>
+                    <td>
+                    <input id="email" name="email" style="width:200px;background:#dddddd;" disabled type="text" value="">
+                    </td>
+                    <th scope="row">면허번호</th>
+                    <td>
+                    <input id="liceno" name="liceno" style="width:200px;background:#dddddd;" disabled type="text" value="">
+                    </td>
+                </tr>
+                <tr id="yn">
+                
+                </tr>
+                <!--
+                 <tr>
+                    <th scope="row">담당 영업사원</th>
+                    <td colspan="3">
+                    	<select id="sel01" onchange="javascript:sel01_onchange(this);" style="width:130px;">
+						</select>
+						<select id="sel02" onchange="javascript:sel02_onchange(this);" style="width:150px;">
+						</select>
+						<select id="sel03" style="width:150px;">
+						</select>
+                    </td>
+                </tr>
+                -->
+            </table>
+              <!-- btn box(bottom) -->
+            <div class="box_btnarea">
+                <p class="alignr">
+                    <span class="btn_pack basic"><button type="submit" onclick="movePage();"><em class="ico_save"></em>목록</button></span>
+                    <span class="btn_pack basic"><button onclick="manualRegist();"><em class="ico_save"></em>저장</button></span>
+					<span class="btn_pack basic"><button ><em class="ico_delete"></em>삭제</button></span>
+                </p>
+            </div>
+            <form id="movePage" action="$!WEB_ROOT/sch/sch.do?method=schResultListSearchView" method="post"></form>
+    </div>
+</div>  
+<!-- //container -->

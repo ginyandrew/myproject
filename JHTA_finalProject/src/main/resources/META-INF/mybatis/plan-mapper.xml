@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="kr.co.jhta.dao.PlanDAO">	
+
+	<!-- Plan 일정 테이블 -->
+	<insert id="addPlan" parameterType="kr.co.jhta.domain.PlanVO">
+		insert into db_plan
+	 	(no, is_completed, leave_date, period, title, theme_code, copy_count, user_no)
+	 	values
+	 	(#{no}, #{isCompleted}, #{leaveDate}, #{period}, #{title}, #{themeCode},#{copyCount},#{user.no})	
+	</insert>
+	
+	<select id="getPlan" resultType="kr.co.jhta.domain.PlanVO">
+		SELECT 
+			P.NO
+			,P.IS_COMPLETED as isCompleted
+			,P.LEAVE_DATE as leaveDate
+			,P.PERIOD
+			,P.TITLE
+			,P.THEME_CODE as themeCode
+			,P.COPY_COUNT as copyCount
+			,P.USER_NO as "user.no"
+			,U.NAME as "user.name"
+			,U.EMAIL as "user.email"
+			,U.GENDER as "user.gender"
+			,U.REG_DATE as "user.regDate"
+			,U.POINT as "user.point"
+		FROM
+			DB_PLAN P
+			,USER_VIEW U
+		WHERE
+			U.NO = P.USER_NO
+		ORDER BY
+			NO
+	</select>
+	
+	<select id="getPlanByNo" parameterType="int" resultType="kr.co.jhta.domain.PlanVO">
+		SELECT 
+			P.NO
+			,P.IS_COMPLETED as isCompleted
+			,P.LEAVE_DATE as leaveDate
+			,P.PERIOD
+			,P.TITLE
+			,P.THEME_CODE as themeCode
+			,P.COPY_COUNT as copyCount
+			,P.USER_NO as "user.no"
+			,U.NAME as "user.name"
+			,U.EMAIL as "user.email"
+			,U.GENDER as "user.gender"
+			,U.REG_DATE as "user.regDate"
+			,U.POINT as "user.point"
+		FROM
+			DB_PLAN P
+			,USER_VIEW U
+		WHERE
+			U.NO = P.USER_NO
+		AND P.NO = #{value}
+	</select>
+
+	<delete id="deletePlanByNo" parameterType="int">
+		delete from db_plan
+		where no = #{value}
+	</delete>
+	
+	
+	
+	<!-- Plan Details 일정상세(하나의 일정에 속한 장소 하나) 테이블 -->
+	<insert id="addPlanDetail" parameterType="kr.co.jhta.domain.PlanDetailVO">
+		insert into db_plan_details
+	 	(no, day, numbering, budget, memo, plan_no, dest_no)
+	 	values
+	 	(#{no}, #{day}, #{numbering}, #{budget}, #{memo}, #{planNo}, #{dest.no})	
+	</insert>
+	
+	<select id="getPlanDetail" resultType="kr.co.jhta.domain.PlanDetailVO">
+		select
+			no, 
+			day, 
+			numbering, 
+			budget, 
+			memo, 
+			plan_no 	as planNo, 
+			dest_no 	as "dest.no"
+		from
+			db_plan_details
+		order by
+			no
+	</select>
+	
+	<select id="getPlanDetailByNo" parameterType="int" resultType="kr.co.jhta.domain.PlanDetailVO">
+		select
+			no, 
+			day, 
+			numbering, 
+			budget, 
+			memo, 
+			plan_no 	as planNo, 
+			dest_no 	as "dest.no"
+		from
+			db_plan_details
+		where 
+			no = #{value}
+	</select>
+
+	<delete id="deletePlanDetailByNo" parameterType="int">
+		delete from db_plan_details
+		where no = #{value}
+	</delete>
+
+	
+	
+	<!-- db_views_plan 하나의 여행지/일정에 조회수 추가-->	
+	<insert id="addviews" parameterType="map">
+		insert into db_views_plan
+	 	(data_no, user_no)
+	 	values
+	 	(#{DATA_NO}, #{USER_NO})	
+	</insert>
+	
+	<!-- db_views_plan 하나의 여행지/일정에 조회수 반환-->	
+	<select id="countReview"  parameterType="int" resultType="int">
+		select 	count(*)
+		from 	db_views_plan
+		where 	data_no = #{value}
+	</select>
+
+	
+	<!-- 용규 -->
+	<select id="makeNewPlan" parameterType="kr.co.jhta.domain.PlanVO">
+	INSERT INTO
+	DB_PLAN(NO, LEAVE_DATE, PERIOD, TITLE, THEME_CODE, USER_NO)
+	 	VALUES
+	 	 (#{no}, #{leaveDate}, #{period}, #{title}, #{themeCode},#{user.no})	
+	</select>
+	<insert id="addNewPlanDetail" parameterType="kr.co.jhta.domain.PlanDetailVO">
+	INSERT INTO
+	DB_PLAN_DETAILS(NO, DAY, PLAN_NO, DEST_NO)
+	 	VALUES
+	 	 (PLAN_SEQ.NEXTVAL, #{day}, #{planNo}, #{dest.no})	
+	</insert>
+	<insert id="insertPlanDetail" parameterType="kr.co.jhta.domain.PlanDetailVO">
+	INSERT INTO
+	DB_PLAN_DETAILS(NO, DAY, PLAN_NO, DEST_NO, numbering)
+	 	VALUES
+	 	 (PLAN_SEQ.NEXTVAL, #{day}, #{planNo}, #{dest.no}, #{numbering})	
+	</insert>
+	<delete id="deletePlanDetailByDayNumbering" parameterType="kr.co.jhta.domain.PlanDetailVO">
+		delete from db_plan_details
+		where plan_no = #{planNo} and day = #{day} and numbering = #{numbering}
+		 
+	</delete>
+	<delete id="deletePlanDetailByDayPlanNo" parameterType="kr.co.jhta.domain.PlanDetailVO">
+		delete from db_plan_details
+		where plan_no = #{planNo} and day = #{day}
+	</delete>
+	
+	<update id="updatePlanDetail" parameterType="kr.co.jhta.domain.PlanDetailVO">
+		UPDATE
+			DB_PLAN_DETAILS
+		<set>
+			<if test="day > 0">
+				day = #{day},
+			</if>
+			<if test="numbering > 0">
+				numbering = #{numbering},
+			</if>
+			<if test="budget > 0">
+				budget = #{budget},
+			</if>
+			<if test="memo != null">
+				memo = #{memo},
+			</if>
+		</set>
+		WHERE
+			plan_no = #{planNo} and day = #{day} and numbering = #{numbering } 	
+	</update>
+	<!-- 진영 -->
+	<select id="getPlanDestCityInfoByPlanNo" parameterType="int" resultType="hashmap">
+	select 
+		p.no 				as planno, 
+		substr(p.leave_date, 1, 4)||'-'||substr(p.leave_date, 5, 2) ||'-'|| substr(p.leave_date, 7, 2) 	as leavedate, 
+		p.period 			as period, 
+		p.theme_code 		as themecode,
+		u.name 				as username,
+		d.name 				as destname, 
+		c.no 				as cityno,
+		c.name 				as cityname
+	from 
+		db_plan p, 
+		db_plan_details t, 
+		db_destination d, 
+		db_city c, db_user u
+	where 
+		p.no = t.plan_no
+		and t.dest_no = d.no
+		and d.city_no = c.no
+		and u.no = p.user_no
+		and p.no = #{value}
+	</select>
+	
+	<!-- 성인 -->
+	<select id="getPlanDetailByPlanNo" parameterType="int" resultType="kr.co.jhta.domain.PlanDetailVO">
+		SELECT
+			PD.NO
+			,PD.PLAN_NO as planNo 
+			,PD.DAY
+			,PD.NUMBERING 
+			,PD.BUDGET
+			,PD.MEMO
+			,PD.DEST_NO as "dest.no"
+			,D.ADDRESS as "dest.address"
+			,D.LAT as "dest.lat"
+			,D.LNG as "dest.lng"
+			,D.NAME as "dest.name"
+			,D.DETAILS as "dest.details"
+			,D.CONTACT as "dest.contact"
+			,D.OPENTIME as "dest.opentime"
+			,D.SITE as "dest.site"
+			,D.CITY_NO as "dest.city.no"
+		FROM
+			DB_PLAN_DETAILS PD
+			,DB_DESTINATION D
+		WHERE 
+			PD.PLAN_NO = #{value}
+		AND PD.DEST_NO = D.NO
+		ORDER BY
+			PD.DAY ASC
+			,PD.NUMBERING ASC
+	</select>
+	<select id="getViewsByPlanNo" parameterType="int" resultType="int">
+		SELECT
+			COUNT
+		FROM
+			PLAN_VIEWS_VIEW
+		WHERE
+			DATA_NO = #{value}
+	</select>
+	
+	<update id="updatePlan" parameterType="kr.co.jhta.domain.PlanVO">
+		UPDATE
+			DB_PLAN
+		<set>
+			<if test="isCompleted != null">
+				IS_COMPLETED = #{isCompleted},
+			</if>
+			<if test="leaveDate != null">
+				LEAVE_DATE = #{leaveDate},
+			</if>
+			<if test="period > 0">
+				PERIOD = #{period},
+			</if>
+			<if test="title != null">
+				TITLE = #{title},
+			</if>
+			<if test="themeCode gt 0 and themeCode lt 7">
+				THEME_CODE = #{themeCode},
+			</if>
+			<if test="copyCount > 0">
+				COPY_COUNT = #{copyCount},
+			</if>
+		</set>
+		WHERE
+			NO = #{no}	
+	</update>
+	
+	<select id="getPlanSequence" resultType="int">
+		SELECT
+			PLAN_SEQ.NEXTVAL
+		FROM
+			DUAL
+	</select>
+	
+	<select id="getAlreadyViewData" parameterType="map" resultType="string">
+		SELECT
+			'T'
+		FROM
+			DB_VIEWS_PLAN
+		WHERE
+			DATA_NO = #{DATA_NO}
+		AND
+			USER_NO = #{USER_NO}
+	</select>
+	
+	<delete id="deletePlanViewsByPlanNo" parameterType="int">
+		DELETE FROM
+			DB_VIEWS_PLAN
+		WHERE
+			DATA_NO = #{value} 
+	</delete>	
+	<delete id="deletePlanDetailsByPlanNo" parameterType="int">
+		DELETE FROM
+			DB_PLAN_DETAILS
+		WHERE
+			PLAN_NO = #{value}
+	</delete>
+	
+	<!-- 주호 -->
+	<select id="getPlanDataByUserNo" parameterType="int" resultType="kr.co.jhta.domain.PlanVO">
+		select
+			no, 
+			is_completed 	as isCompleted, 
+			leave_date 		as leaveDate, 
+			period, 
+			title, 
+			theme_code 		as themeCode, 
+			copy_count 		as copyCount, 
+			user_no 		as "user.no"
+		from
+			db_plan
+		where 
+			user_no = #{value}
+					
+	</select>
+	<!-- 기간을 추가하여 마지막날을 수정 -->
+	<update id="updatePlanArriveDate" parameterType="kr.co.jhta.domain.PlanVO" >
+		update 
+			db_plan
+			<set>
+				<if test="period > 0">
+					PERIOD = #{period},
+				</if>
+			</set>
+		where
+			no = #{no}	
+	</update>
+	<select id="getClipBoard" parameterType="int" resultType="kr.co.jhta.domain.ClipboardVO">
+		 	select 
+		 		dest_no 	as "dest.no"
+		 		,user_no 	as "user.no"
+		 	from 
+		 		db_clipboard
+		 	where
+		 		dest_no = #{dest.no}	
+	</select>
+	<insert id="addClipBoard">
+		insert into
+			db_clipboard(dest_no,user_no)
+		values
+			(#{dest.no},#{user.no})	
+			
+	</insert>
+	<!-- 지훈 -->
+	
+	<!-- 명신 -->
+	<select id="getPlanByCityNo" parameterType="int" resultType="kr.co.jhta.domain.PlanVO">
+		SELECT DISTINCT
+			 plan.NO
+			,plan.IS_COMPLETED as isCompleted
+			,plan.USER_NO as "user.no"
+			,plan.LEAVE_DATE as leaveDate
+			,plan.PERIOD
+			,plan.TITLE
+			,plan.THEME_CODE as themeCode
+			,plan.COPY_COUNT as copyCount
+		FROM
+			DB_PLAN plan
+			,DB_PLAN_DETAILS detail
+			,DB_DESTINATION dest
+		WHERE
+			dest.CITY_NO = #{value}
+		AND IS_COMPLETED = 'T'
+		AND plan.NO = detail.PLAN_NO
+		AND dest.NO = detail.DEST_NO
+	</select>
+	
+	<!-- 20160217 모든일정 뿌리는걸 합니다. -->
+	<select id="getAllPlanList" resultType="kr.co.jhta.domain.PlanVO">
+	SELECT
+			 plan.NO
+			,plan.IS_COMPLETED as isCompleted
+			,plan.USER_NO as "user.no"
+      		,u.NAME as "user.name"
+			,plan.LEAVE_DATE as leaveDate
+			,plan.PERIOD
+			,plan.TITLE
+			,plan.THEME_CODE as themeCode
+			,plan.COPY_COUNT as copyCount
+		FROM
+			DB_PLAN plan, DB_USER u
+		WHERE plan.IS_COMPLETED = 'T'
+    AND plan.USER_NO = u.NO
+    ORDER BY
+      plan.no DESC
+	</select>
+</mapper>

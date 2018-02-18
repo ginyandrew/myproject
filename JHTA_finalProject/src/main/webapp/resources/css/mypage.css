@@ -1,0 +1,95 @@
+.thumbnail img {
+    width: 100%;
+}
+thumbnail_mypage{display:block; margin-bottom:20px;line-height:1.42857143;background-color:#fff;border:1px solid #ddd;border-radius:4px;-webkit-transition:border .2s ease-in-out;-o-transition:border .2s ease-in-out;transition:border .2s ease-in-out}
+.t_input {
+	padding-left:10px;
+}
+
+/*2016.01.31 Mypage*/
+
+.my_list-group{padding-left:0;margin-bottom:20px}
+.my_list-group-item{position:relative;display:block;padding:10px 15px;margin-bottom:-1px;background-color:#fff;border:1px solid #ddd}
+.my_list-group-item:first-child{border-top-left-radius:4px;border-top-right-radius:4px}
+.my_list-group-item:last-child{margin-bottom:0;border-bottom-right-radius:4px;border-bottom-left-radius:4px}
+a.my_list-group-item,button.my_list-group-item{color:#555}
+a.my_list-group-item .my_list-group-item-heading,button.my_list-group-item .my_list-group-item-heading{color:#333}
+a.my_list-group-item:focus,a.my_list-group-item:hover,button.my_list-group-item:focus,button.my_list-group-item:hover{color:#555;text-decoration:none;background-color:#f5f5f5}
+.button.my_list-group-item{width:100%;text-align:left}
+.my_list-group-item.disabled,.my_list-group-item.disabled:focus,.my_list-group-item.disabled:hover{color:#777;cursor:not-allowed;background-color:#eee}
+.my_list-group-item.disabled .my_list-group-item-heading,.my_list-group-item.disabled:focus .my_list-group-item-heading,.my_list-group-item.disabled:hover .my_list-group-item-heading{color:inherit}
+.my_list-group-item.disabled .my_list-group-item-text,.my_list-group-item.disabled:focus .my_list-group-item-text,.my_list-group-item.disabled:hover .my_list-group-item-text{color:#777}
+.my_list-group-item.active,.my_list-group-item.active:focus,.my_list-group-item.active:hover{z-index:2;color:#fff;background-color:#ff5e3b;border-color:#ff5e3b}
+.my_list-group-item.active .my_list-group-item-heading,.my_list-group-item.active .my_list-group-item-heading>.small,.my_list-group-item.active .my_list-group-item-heading>small,.my_list-group-item.active:focus .my_list-group-item-heading,.my_list-group-item.active:focus .my_list-group-item-heading>.small,.my_list-group-item.active:focus .my_list-group-item-heading>small,.my_list-group-item.active:hover .my_list-group-item-heading,.my_list-group-item.active:hover .my_list-group-item-heading>.small,.my_list-group-item.active:hover .my_list-group-item-heading>small{color:inherit}.my_list-group-item.active .my_list-group-item-text,.my_list-group-item.active:focus .my_list-group-item-text,.my_list-group-item.active:hover .my_list-group-item-text{color:#225d68}
+.my_list-group-item-success{color:#3c7376;background-color:#d8f0ee}
+a.my_list-group-item-success,button.my_list-group-item-success{color:#3c7376}
+a.my_list-group-item-success .my_list-group-item-heading,button.my_list-group-item-success .my_list-group-item-heading{color:inherit}
+a.my_list-group-item-success:focus,a.my_list-group-item-success:hover,button.my_list-group-item-success:focus,button.my_list-group-item-success:hover{color:#3c7376;background-color:#d0e9c6}
+a.my_list-group-item-success.active,a.my_list-group-item-success.active:focus,a.my_list-group-item-success.active:hover,button.my_list-group-item-success.active,button.my_list-group-item-success.active:focus,button.my_list-group-item-success.active:hover{color:#fff;background-color:#3c7376;border-color:#3c7376}
+.my_list-group-item-info{color:#31708f;background-color:#d9f7f3}a.my_list-group-item-info,button.my_list-group-item-info{color:#31708f}
+a.my_list-group-item-info .my_list-group-item-heading,button.my_list-group-item-info .my_list-group-item-heading{color:inherit}a.my_list-group-item-info:focus,a.my_list-group-item-info:hover,button.my_list-group-item-info:focus,button.my_list-group-item-info:hover{color:#31708f;background-color:#c4e3f3}
+a.my_list-group-item-info.active,a.my_list-group-item-info.active:focus,a.my_list-group-item-info.active:hover,button.my_list-group-item-info.active,button.my_list-group-item-info.active:focus,button.my_list-group-item-info.active:hover{color:#fff;background-color:#31708f;border-color:#31708f}.my_list-group-item-warning{color:#3b838a;background-color:#fcf8e3}
+a.my_list-group-item-warning,button.my_list-group-item-warning{color:#3b838a}
+a.my_list-group-item-warning .my_list-group-item-heading,button.my_list-group-item-warning .my_list-group-item-heading{color:inherit}
+a.my_list-group-item-warning:focus,a.my_list-group-item-warning:hover,button.my_list-group-item-warning:focus,button.my_list-group-item-warning:hover{color:#3b838a;background-color:#faf2cc}
+a.my_list-group-item-warning.active,a.my_list-group-item-warning.active:focus,a.my_list-group-item-warning.active:hover,button.my_list-group-item-warning.active,button.my_list-group-item-warning.active:focus,button.my_list-group-item-warning.active:hover{color:#fff;background-color:#3b838a;border-color:#3b838a}.my_list-group-item-danger{color:#b45124;background-color:#f2dede}
+a.my_list-group-item-danger,button.my_list-group-item-danger{color:#b45124}
+a.my_list-group-item-danger .my_list-group-item-heading,button.my_list-group-item-danger .my_list-group-item-heading{color:inherit}
+a.my_list-group-item-danger:focus,a.my_list-group-item-danger:hover,button.my_list-group-item-danger:focus,button.my_list-group-item-danger:hover{color:#b45124;background-color:#ebcccc}
+a.my_list-group-item-danger.active,a.my_list-group-item-danger.active:focus,a.my_list-group-item-danger.active:hover,button.my_list-group-item-danger.active,button.my_list-group-item-danger.active:focus,button.my_list-group-item-danger.active:hover{color:#fff;background-color:#b45124;border-color:#b45124}
+.my_list-group-item-heading{margin-top:0;margin-bottom:5px}
+.my_list-group-item-text{margin-bottom:0;line-height:1.3}
+
+
+/*myBTN*/
+.mypage_con{float:left; width:75%; background-color:#fff; border:1px solid #bbbbbd; padding:20px}
+.config_foot a{text-outline:none; text-decoration:none;}
+.mybtn-success{color:#fff;background-color:#ff9320;border-color:#f57e00}
+.mybtn-success.focus,.mybtn-success:focus{color:#fff;background-color:#f36d00;border-color:#f98000}
+.mybtn-success:hover{color:#fff;background-color:#f36d00;border-color:#0abfca}
+.mybtn-success.active,.mybtn-success:active,.open>.dropdown-toggle.mybtn-success{color:#fff;background-color:#f36d00;border-color:#0abfca}
+
+.mybtn-success.disabled.focus,.mybtn-success.disabled:focus,.mybtn-success.disabled:hover,.mybtn-success[disabled].focus,.mybtn-success[disabled]:focus,.mybtn-success[disabled]:hover,fieldset[disabled] .mybtn-success.focus,fieldset[disabled] .mybtn-success:focus,fieldset[disabled] .mybtn-success:hover{background-color:#ff9320;border-color:#f57e00}
+.mybtn-success .badge{color:#ff9320;background-color:#fff}.btn-info{color:#fff;background-color:#5bc0de;border-color:#45e6e3}
+
+.save-success{color:#fff;background-color:#49b2e9;border-color:#319ad1}
+.save-success.focus,.save-success:focus{color:#fff;background-color:#4991e9;border-color:#f98000}
+.save-success:hover{color:#fff;background-color:#4991e9;border-color:#3980d7}
+.save-success.active,.save-success:active,.open>.dropdown-toggle.save-success{color:#fff;background-color:#4991e9;border-color:#3980d7}
+
+.save-success.disabled.focus,.save-success.disabled:focus,.save-success.disabled:hover,.save-success[disabled].focus,.save-success[disabled]:focus,.save-success[disabled]:hover,fieldset[disabled] .save-success.focus,fieldset[disabled] .save-success:focus,fieldset[disabled] .save-success:hover{background-color:#49b2e9;border-color:#319ad1}
+.save-success .badge{color:#49b2e9;background-color:#fff}.btn-info{color:#fff;background-color:#5bc0de;border-color:#45e6e3}
+
+/*end:myBTN*/
+
+/*form*vertical-align:middle*/
+input[type=date].form-control,input[type=time].form-control,input[type=datetime-local].form-control,input[type=month]
+.form-control{line-height:34px}
+.input-group-sm input[type=date],.input-group-sm input[type=time],.input-group-sm input[type=datetime-local],.input-group-sm input[type=month],input[type=date].input-sm,input[type=time].input-sm,input[type=datetime-local].input-sm,input[type=month].input-sm{line-height:30px}
+.input-group-lg input[type=date],.input-group-lg input[type=time],.input-group-lg input[type=datetime-local],.input-group-lg input[type=month],input[type=date].input-lg,input[type=time].input-lg,input[type=datetime-local].input-lg,input[type=month].input-lg{line-height:46px}}
+.form-group{margin-bottom:15px}.checkbox,.radio{position:relative;display:block;margin-top:10px;margin-bottom:10px}
+.checkbox label,.radio label{min-height:20px;padding-left:20px;margin-bottom:0;font-weight:400;cursor:pointer}
+.checkbox input[type=checkbox],.checkbox-inline input[type=checkbox],.radio input[type=radio],.radio-inline input[type=radio]{position:absolute;margin-top:4px\9;margin-left:-20px}
+.checkbox+.checkbox,.radio+.radio{margin-top:-5px}.checkbox-inline,.radio-inline{position:relative;display:inline-block;padding-left:20px;margin-bottom:0;font-weight:400;vertical-align:middle;cursor:pointer}
+.checkbox-inline+.checkbox-inline,.radio-inline+.radio-inline{margin-top:0;margin-left:10px}fieldset[disabled] input[type=checkbox],fieldset[disabled] input[type=radio],input[type=checkbox].disabled,input[type=checkbox][disabled],input[type=radio].disabled,input[type=radio][disabled]{cursor:not-allowed}
+.checkbox-inline.disabled,.radio-inline.disabled,fieldset[disabled] .checkbox-inline,fieldset[disabled] .radio-inline{cursor:not-allowed}
+.checkbox.disabled label,.radio.disabled label,fieldset[disabled] .checkbox label,fieldset[disabled] .radio label{cursor:not-allowed}
+.radio{display:inline-block;margin-top:0;margin-bottom:0;vertical-align:middle}
+/*end:form*/
+
+.ratings {
+    padding-right: 10px;
+    padding-left: 10px;
+    color: #d17581;
+}
+
+a.plan-img {
+    float: left;
+    width: 310px;
+    height: 202px;
+    margin: 16px 16px 0 0;
+    position: absolute;
+    top:0px;
+    left:0px;
+    overflow: hidden;           
+}

@@ -1,0 +1,142 @@
+<!doctype html>
+<html class="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>오스템 AIC 강의 안내</title>
+<link href="$!WEB_ROOT/css/common/mobile.css" rel="stylesheet" type="text/css">
+<script type='text/javascript' src='$!WEB_ROOT/js/main/main.js'></script>
+<script type='text/javascript' src='$!WEB_ROOT/js/common/jquery/jquery.js'></script>
+<script type='text/javascript' src='$!WEB_ROOT/js/common/jquery/jquery-ui.js'></script>
+<script type='text/javascript' src='$!WEB_ROOT/js/common/jquery.cookie.js'></script>
+<script type='text/javascript' src='$!WEB_ROOT/js/common/commonJavascript.js'></script>
+<link href="$!WEB_ROOT/css/common/mobile.css" rel="stylesheet" type="text/css">
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schSendMobileMsgView.js'></script>
+</head>
+<script type='text/javascript'>
+			var WEB_ROOT = '$!WEB_ROOT';
+</script>
+<style>
+	#overlay_t { background-color: #000; bottom: 0; left: 0; 
+	opacity: 0.5; filter: alpha(opacity = 50); /* IE7 & 8 */ 
+	position: fixed; right: 0; 
+	top: 0; z-index: 99; 
+	display:none;}
+
+	#popup_layer { width:70%; height:40%; margin-bottom:30px; 
+	background:#fff; border:solid 1px #ccc; 
+	position:absolute; top:30%; left:15%; 
+	box-shadow: 0px 1px 20px #333; 
+	z-index:100; display:none;}
+</style>		
+
+<body>
+<div class="gridContainer clearfix">
+  <div id="LayoutDiv1">
+  	#if($!fileId != "0")
+  	<div style="padding:0px 0 10px 0">
+  		<img src="data:image/png;base64,$!base64Image" style='height: 100%; width: 100%; object-fit: contain'/>
+	</div>
+  	#end
+   
+ 	 <input type="hidden" value="$!sch.sch_gb_01" id="gb01">
+ 	 <table  width="100%" class="m_view1">
+         <colgroup>
+            <col width="18%" />
+            <col width="32%" />
+            <col width="18%" />
+            <col width="32%" />
+        </colgroup>
+        <tr>
+            <th scope="row">성명</th>
+            <td colspan="3">$!psnList.get("NAME")</td>
+             
+        </tr>
+         <tr>
+            <th scope="row">연락처</th>
+            <td colspan="3">$!psnList.get("PHONE")</td>
+        </tr>
+         <tr>
+            <th scope="row">병의원명</th>
+            <td colspan="3">$!psnList.get("HOSNAME")</td>
+         </tr>
+         
+         <tr>
+            <th scope="row">참석<br/>희망여부</th>
+            <td colspan="3">
+            	<input name="pres_yn" type="radio" value="Y" >예 
+            	<input name="pres_yn" type="radio" value="N" checked style="margin-left:20px"> 아니오
+        	</td>
+         </tr>
+     	#if($!sch.sch_gb_01 == "01" )
+        <tr>
+            <th scope="row">강연<br/>희망여부</th>
+            <td colspan="3">
+            	<input name="hope_spk_yn" type="radio" value="Y">예
+	            <input name="hope_spk_yn" type="radio" value="N" checked style="margin-left:20px">아니오
+        	</td>
+        </tr>
+        #else
+		<input type="hidden" name="hope_spk_yn" value="N">
+		#end         
+         
+	    <input type="hidden" name="sch_id" id="sch_id" value="$!schId">
+	    <input type="hidden" name="psn_id" id="psn_id" value="$!psnId">
+   </table>
+
+    <table width="100%" class="m_view1">
+        <tr>
+            <th scope="row" class="alignc">개인정보 수집 동의서</th>
+        </tr>
+         <tr>
+            <td>
+                <div style="width:98%; height:200px; overflow-y:scroll; overflow-x:hidden">
+                	
+					오스템임플란트는 개인정보보호법 등 관련법령상의 개인정보보호 규정을 준수하며, 개인의 정보
+					를 수집하는 목적과 보유기간, 처리방법은 아래와 같습니다.<br/>
+					<br/>
+					[개인정보 수집 목적]<br>
+					오스템임플란트가 시행하는 강연회 및 연수회 참석자 관리 및 사전진행 안내<br/>
+					[개인정보 수집 항목] <br/>
+					1.	필수 항목 : 성명, 연락처(핸드폰 번호), 소속 병의원명, <br/>
+					2.	선택 항목 : 면허번호<br/>
+					[개인정보 보유기간] <br/>
+					개인정보의 수집 및 이용 목적 달성 시까지 보유하며 상기 기간이 종료 후에는 해당 정보를 지체
+					없이 파기합니다.<br/>
+					[개인정보 수집 동의 거부와 권리]<br/>
+					오스템임플란트는 보다 원활한 서비스 제공을 위하여 필수 입력정보를 수집하고 있으며, 이를 거
+					부할 시에는 서비스 제공에 어려움이 있을 수 있습니다. <br/>
+                	<br/>
+                	[개인정보 수집 목적]<br/>
+					오스템임플란트가 시행하는 강연회 및 연수회 참석자 관리 및 사전진행 안내<br/>
+					<br/>
+					[개인정보 수집 항목] <br/>
+					   1. 필수 항목 : 성명, 연락처(핸드폰 번호), 소속 병의원명, <br/>
+					   2. 선택 항목 : 면허번호<br/>
+					<br/>
+					[개인정보 보유기간] <br/>
+					개인정보의 수집 및 이용 목적 달성 시까지 보유하며 상기 기간이 종료 후에는 해당 정보를 지체없이 파기합니다.<br/>
+					<br/>
+					[개인정보 수집 동의 거부와 권리]<br/>
+					오스템임플란트는 보다 원활한 서비스 제공을 위하여 필수 입력정보를 수집하고 있으며, 이를 거부할 시에는 서비스 제공에 어려움이 있을 수 있습니다. <br/>
+                	
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td><input id="agree" name="" type="checkbox"> 이용약관에 동의합니다.
+            </td>
+        </tr>
+    </table>
+     <!-- btn box(bottom) -->
+    <div class="box_btnarea">
+        <a href="" class="btn" onclick="insertYnRcp();return false;" data-direction ="reverse">완료</a>
+    </div>
+    <!-- //btn box(bottom) -->
+  </div>
+</div>
+
+<div id="overlay_t" width=100%></div> 
+<div id="popup_layer" ><span style="display:table; margin:40% auto;">약관에 먼저 동의해주세요.</span></div>
+</body>
+</html>

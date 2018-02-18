@@ -1,0 +1,278 @@
+##강의신청 관리 - 신청한 원장 개인정보 뷰
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schResultManualRegistBySchIdView.js'></script>
+<style>
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  /* IE 6 doesn't support max-height
+   */
+  * html .ui-autocomplete {
+    height: 100px;
+  }
+</style>  
+ <!-- container -->
+    <div id="container">
+          <div class="titarea">
+              <h2>강의신청 관리 수동등록</h2>
+           </div>
+         <input id="gb01" type="hidden" value="$!gb01">
+          #set($sch = $!sch)
+         <form id="frm1" method="post" action="$!WEB_ROOT/sch/sch.do?method=insertSchReg">
+         	<input id="schId" name="sch_id" type="hidden" value="$sch.id">
+         	<input id="psnId" name="psn_id" type="hidden" value="">
+         	<input id="pres_Yn" name="pres_yn" type="hidden" value="">
+         	<input id="spk_Yn" name="hope_spk_yn" type="hidden" value="">
+         	<input id="sabun" name="sal_emp_no" type="hidden" value="">
+         	<input id="selfYn" name="self_yn" type="hidden" value="N">
+         	<input id="restYn" name="rest_yn" type="hidden" value="">
+         </form>  
+         
+         <form id="frm2" method="post" action="$!WEB_ROOT/sch/sch.do?method=deleteRegPsnList">
+         	<input id="sch_id" name="schId" type="hidden" value="">
+         	<input id="psn_id" name="psnId" type="hidden" value="">
+         </form>
+         
+           <table width="100%" class="tb_view1">
+                <colgroup>
+                    <col width="8%" />
+                    <col width="36%" />
+                    <col width="8%" />
+                    <col width="*" />
+                </colgroup>
+                <tr>
+                    <th scope="row">구분</th>
+                    <td  class="r_line">
+                         <select  name="" class="sel" style="width:100px;background:#dddddd;" disabled>
+                            <option value="01" selected="selected">강연회</option>
+                            <option value="02">연수회</option>
+                        </select>
+                         <select  name="" class="sel" style="width:180px;background:#dddddd;" disabled>
+                            <option value="101" selected="selected">연구회</option>
+							<option value="102">보수교육</option>
+							<option value="103">Faculty Seminar</option>
+							<option value="104">수요화상</option>
+							<option value="105">Osstem meeting</option>
+							<option value="201" selected="selected">Basic</option>
+							<option value="202">Advanced</option>
+							<option value="203">Master</option>
+							<option value="204">One-day Course</option>
+                        </select>
+                    </td>
+                    <th scope="row">제목</th>
+                    <td>
+                    	 <div class="api_atcmp_wrap">
+                    	    <input id="title" name="title" style="width:400px;background:#dddddd;" disabled type="text" value="$sch.title">
+                       </div>
+                    </td>
+                </tr>
+                 <tr>
+                    <th scope="row">장소</th>
+                    <td>
+                    <input id="place" name="place" style="width:300px;background:#dddddd;" disabled type="text" value="$sch.place">
+                    </td>
+                    <th scope="row">주관</th>
+                    <td>
+                    <input id="orgNm" type="text" style="width:150px;background:#dddddd;" disabled value="$sch.org_nm">
+                    </td>
+                    
+                </tr>
+                <tr>
+                    <th scope="row">일시</th>
+                    <td >
+                        <span class="marr20 " id="date">$!schDt</span> <span class="bg_l_left" id="time">$!schStaHr:00 ~ $!schFinHr:00 </span>
+                    </td>
+                    <th scope="row">담당</th>
+                    <td>
+                    <input id="name" style="width:150px;background:#dddddd;" disabled  type="text" value="$sch.name">
+                    </td>
+                 </tr>
+                 
+            </table>
+            
+            <br/>
+            <p style="float:right;padding-bottom:3px;">
+            <span class="btn_pack basic"><button onclick="rest_save();"><em class="ico_save"></em>발송제외 저장</button></span>
+			</p>
+			
+			<table width="100%" class="tb_view2">
+				<colgroup>
+					<col width="40px" />
+					<col width="80px" />
+					<col width="360px" />
+					<col width="120px" />
+					<col width="60px" />
+					<col width="60px" />
+					<col width="80px" />
+					<col width="60px" />
+					<col width="*" />
+				</colgroup>
+				<thead>
+					<tr>
+						<th scope="row">삭제</th>
+						<th scope="row">성명</th>
+						<th scope="row">병의원명</th>
+						<th scope="row">연락처</th>
+						<th scope="row">강연희망</th>
+						<th scope="row">참석희망</th>
+						<th scope="row">담당 <br/>영업사원</th>
+						<th scope="row">본인 <br/>응답여부</th>
+						<th scope="row">발송제외</th>
+					</tr>
+				</thead>
+			</table>
+			
+			<div style=" width:100%;height:300px; overflow-y:scroll;border:1px solid #d3d3d3;">
+				<table width="100%" class="tb_view2">
+					<colgroup>
+						<col width="40px" />
+						<col width="80px" />
+						<col width="360px" />
+						<col width="120px" />
+						<col width="60px" />
+						<col width="60px" />
+						<col width="80px" />
+						<col width="60px" />
+						<col width="*" />
+					</colgroup>
+					
+					<tbody id="psnList">
+						#set($psnList = $!psnList)
+						#foreach($psn in $psnList)
+							<tr>
+								<td>
+								#if($psn.get("ifCanDelete") == 'Y')
+									<input type="checkbox" name="ifDeleteReg" value=""><label><span ></span></label>
+                                	<input type="hidden" name="" value="$psn.get("psnId")">
+								#end
+								</td>
+                                <td><a href="" onclick="updatePsnInfo($psn.get("psnId"));return false;">$psn.get("name")</a></td>
+                                <td>$psn.get("hosName")</td>
+                                <td>$psn.get("phone")</td>
+                                <td>$psn.get("spkHope")</td>
+                                <td>$psn.get("presHope")</td>
+                                <td>$psn.get("sawon")</td>
+                                <td>$psn.get("selfYn")</td>
+                                
+                                <td id="restYn">
+                                	<input type="checkbox" name="" #if($psn.get("restYn")=='Y') checked #end value="$psn.get("restYn")"><label><span ></span></label>
+                                	<input type="hidden" name="" value="$psn.get("psnId")">
+                                </td>
+                            </tr>
+						#end
+					</tbody>
+				</table>
+			</div>
+	
+			<p style="padding-top:3px;padding-bottom:10px;">
+				<span style="float:left;" class="btn_pack basic"><button onclick="deletePsn();"><em class="ico_delete"></em>삭제</button></span>
+            	<span style="float:right;" class="btn_pack basic"><button type="submit" onclick="movePage();"><em class="ico_save"></em>목록</button></span>
+            	<span style="float:right;" class="btn_pack basic"><button onclick="addPsn();"><em class="ico_save"></em>추가</button></span>
+			</p>
+			<br/>
+            <table width="100%" class="tb_view1" id="psnForm" style="display:none;">
+                <colgroup>
+                    <col width="13%" />
+                    <col width="30%" />
+                    <col width="13%" />
+                    <col width="*" />
+                </colgroup>
+                <tr>
+                    <th scope="row">성명</th>
+                    <td  class="r_line">
+                         <div class="api_atcmp_wrap" >
+                    	    <input id="psnName" name="allName" style="width:200px;" type="text" onkeyup="autoSearchName(this)";>
+                         </div>
+                    </td>
+                    <th scope="row">연락처</th>
+                    <td>
+                    <input id="phone" name="phone" style="width:200px;background:#dddddd;" disabled type="text" value="">
+                    </td>
+                </tr>
+                 <tr>
+                    <th scope="row">병의원명</th>
+                    <td>
+                    <input id="hosname" name="hosname" style="width:200px;background:#dddddd;" disabled type="text" value="">
+                    </td>
+                    <th scope="row">병원주소</th>
+                    <td>
+                    <input id="addr" name="addr" style="width:400px;background:#dddddd;" disabled type="text" value="">
+                    </td>
+                </tr>
+                <tr>
+                    <th scope="row">E-mail</th>
+                    <td>
+                    <input id="email" name="email" style="width:200px;background:#dddddd;" disabled type="text" value="">
+                    </td>
+                    <th scope="row">면허번호</th>
+                    <td>
+                    <input id="liceno" name="liceno" style="width:200px;background:#dddddd;" disabled type="text" value="">
+                    </td>
+                </tr>
+
+                <tr>
+                	#if($!gb01 == "02")
+	                	<th scope="row">참석 희망여부</th>
+	                    <td>
+	                    <input id="" type="radio" name="presyn" value="Y"><label for="" ><span><span></span></span>예</label>  
+	                     <input id="" type="radio" name="presyn" value="N"><label for=""><span><span></span></span>아니오</label>
+	                    </td>
+	                    <th scope="row"></th>
+	                    <td></td>
+                	#else
+	                    <th scope="row">참석 희망여부</th>
+	                    <td>
+	                    <input id="" type="radio" name="presyn" value="Y"><label for="" ><span><span></span></span>예</label>  
+	                     <input id="" type="radio" name="presyn" value="N"><label for=""><span><span></span></span>아니오</label>
+	                    </td>
+	                    <th scope="row">강연 희망여부</th>
+	                    <td>
+	                    <input id="" type="radio" name="spkyn" value="Y"><label for="" ><span><span></span></span>예</label>  
+	                     <input id="" type="radio" name="spkyn" value="N"><label for=""><span><span></span></span>아니오</label>
+	                    </td>
+                	#end
+                </tr>
+				<tr>
+					<th scope="row">발송제외</th>
+                    <td>
+                    	<input id="" type="radio" name="restyn" value="Y"><label for="" ><span><span></span></span>예</label>  
+	                    <input id="" type="radio" name="restyn" value="N"><label for=""><span><span></span></span>아니오</label>
+                    </td>
+                    <th scope="row"></th>
+                    <td></td>
+				</tr>
+               
+            </table>
+			
+			<p style="float:right;padding-top:3px;padding-bottom:10px;">
+            	<span class="btn_pack basic">
+            	<button id="saveBtn" onclick="manualRegist();return false;" style="display:none;"><em class="ico_save"></em>저장</button>
+            	</span>
+			</p>
+            
+            <form id="movePage" action="$!WEB_ROOT/sch/sch.do?method=schResultListSearchView" method="post"></form>
+
+    </div>
+</div>  
+<!-- //container -->
+
+
+
+
+<!--
+ <tr>
+    <th scope="row">담당 영업사원</th>
+    <td colspan="3">
+    	<select id="sel01" onchange="javascript:sel01_onchange(this);" style="width:130px;">
+		</select>
+		<select id="sel02" onchange="javascript:sel02_onchange(this);" style="width:150px;">
+		</select>
+		<select id="sel03" style="width:150px;">
+		</select>
+    </td>
+</tr>
+-->
+
+

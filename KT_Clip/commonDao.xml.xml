@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="clip2.web.common.WebCommonDao">
+
+    <!-- 준회원 가입 약관 조회 -->
+    <select id="getTermAgreeInfo" resultType="com.kt.clip2.web.common.vo.TermAgreeVO">
+	<![CDATA[
+		SELECT /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getTermAgreeInfo].[01] 변경일자(20160725) */
+			 url.agree_type AS agreeType
+			,url.agree_url AS agreeUrl
+		FROM(
+			SELECT 
+				agree_type AS agree_type
+				,agree_url AS agree_url
+				,ROW_NUMBER() OVER(PARTITION BY agree_type ORDER BY agree_version DESC) AS rownum
+			FROM mw_ws_agree WITH(nolock)
+			WHERE agree_type IN('PRIV','TERM','MERC')
+		) AS url
+		WHERE url.rownum = 1
+		UNION ALL
+		SELECT
+			 memUrl.agree_type AS agreeType
+			,memUrl.agree_url AS agreeUrl
+		FROM (
+			SELECT 
+				'MEMBUSE' AS agree_type
+				,agree_content AS agree_url
+				,ROW_NUMBER() OVER(PARTITION BY memb_id ORDER BY seq_no DESC) AS rownum
+			FROM mw_ms_memb_agree (nolock)
+			WHERE memb_id = 'bckock'
+			AND agree_title like '%이용약관'
+		) AS memUrl
+		WHERE memUrl.rownum = 1
+    ]]>
+    </select>
+    
+    <!-- 공지사항 갯수 -->
+    <select id="getNoticePage" parameterType="String" resultType="int">
+    	select /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getNoticePage].[02] 변경일자(20160802) */ 
+    		count(*)/30 + 1
+		from 
+			mw_ws_event (nolock)
+		where 
+			cast (convert(varchar(10), getdate(), 112)as int) between cast(sday as int) and cast(eday as int)
+			and evt_mode = 'N'
+			and stat = 'R'
+			<choose>
+				<when test="value.equals('common') ">
+				and os = 'common'			
+				</when>
+				<otherwise>
+				and os in ('common', #{value})
+				</otherwise>
+			</choose>
+    </select>
+    
+    <!-- 공지사항 타이틀 리스트 -->
+    <select id="getNoticeList" parameterType="map" resultType="com.kt.clip2.web.common.vo.NoticeVO">
+    	select /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getNoticeList].[03] 변경일자(20160802) */
+	    		a.idx								as idx, 
+	    		convert(char(10), a.reg_tm, 120)	as regTm, 
+	    		a.title  							as title,
+	    		datediff(hour, a.reg_tm, getdate()) as howLongPosted
+		from 	(	select row_number() over (order by reg_tm desc) as row_num, *
+				 	from mw_ws_event (nolock)
+					where evt_mode = 'N'
+					and stat = 'R'
+					<choose>
+						<when test="os.equals('common') ">
+						and os = 'common'			
+						</when>
+						<otherwise>
+						and os in ('common', #{os})
+						</otherwise>
+					</choose>
+					and cast (convert(varchar(10), getdate(), 112)as int) between cast(sday as int) and cast(eday as int)
+				)a
+		where 
+			a.row_num between ((#{pageNo}-1)*30+1) and (#{pageNo}*30)
+			order by a.row_num
+    </select>
+    
+    <select id="getTheNotice" parameterType="int" resultType="com.kt.clip2.web.common.vo.NoticeVO">
+        select /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getTheNotice].[04] 변경일자(20160910) */
+               top 1
+               idx,
+               howLongPosted,
+               regTm,
+               title,
+               msgMode,
+               imgHost,
+               url,
+               msg
+          from (
+		    	select 
+		    		idx,
+		    		datediff(hour, reg_tm, getdate()) 	as howLongPosted, 
+		    		convert(char(10), reg_tm, 120)		as regTm, 
+		    		title, 
+		    		msg_mode							as msgMode, 
+		    		img_host							as imgHost, 
+		    		url, 
+		    		msg
+				from mw_ws_event (nolock)
+				where idx = #{idx}
+				union 
+		    	select
+		    		idx,
+		    		datediff(hour, reg_tm, getdate()) 	as howLongPosted, 
+		    		convert(char(10), reg_tm, 120)		as regTm, 
+		    		title, 
+		    		msg_mode							as msgMode, 
+		    		img_host							as imgHost, 
+		    		url, 
+		    		msg
+				from mw_ws_event_cv2 (nolock)
+				where idx = #{idx}
+    		) as t				
+    </select>
+    
+    <select id="getFaQListByPart" parameterType="String" resultType="com.kt.clip2.web.common.vo.FaqVO">
+    	select	/* [CommonDao.xml].[clip2.web.common.WebCommonDao.getFaQListByPart].[05] 변경일자(20160803) */ 
+    		idx, part, title, answer
+		from mw_faq_cv2 (nolock)
+		/* from mw_new_faq (nolock) */
+		where part = #{part}
+    </select>
+    
+    <!-- 기프티쇼 약관 목록 조회 -->
+    <select id="getGiftishowTermAgreeList" resultType="com.kt.clip2.web.common.vo.GiftishowTermAgreeVO">
+    	SELECT /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getGiftishowTermAgreeList].[06] 변경일자(20160806) */ 
+			  agree.memb_id 			AS membId
+			, member.name 				AS membName
+			, company.comp_name 		AS compName
+			, agree.agree_dp_seq 		AS agreeDpSeq
+			, agree.agree_code 			AS agreeCode
+			, agree.agree_title 		AS agreeTitle
+			, agree.agree_content 		AS agreeContent
+			, agree.agree_compulsory_yn AS agreeCompulsoryYn
+			, agree.agree_disp_dtm 		AS agreeDispDtm
+			, agree.use_yn 				AS useYn
+		FROM 
+			mw_ms_memb_agree AS agree (nolock)
+		INNER JOIN 
+			memb_cardlist AS member (nolock)
+		ON 
+			agree.memb_id = member.memb_id
+		INNER JOIN
+			mw_cm_company AS company (nolock)
+		ON
+			member.comp_id = company.comp_id
+		WHERE 
+			agree.memb_id = 'hid_giftshow'
+		AND 
+			agree.use_yn='Y'
+		ORDER BY 
+			agree.agree_dp_seq
+    </select>
+    
+    <!-- 공지사항 레이어 팝업 : 메인 노출 공지사항 1개 제공 -->
+    <select id="getNoticePopup" parameterType="int" resultType="com.kt.clip2.web.common.vo.NoticeVO">
+        select /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getNoticePopup].[07] 변경일자(20160806) */
+            a.idx                                 as idx, 
+            convert(varchar(10), a.reg_tm, 23)    as regTm, 
+            a.title                               as title, 
+            a.msg_mode                            as msgMode, 
+            a.img_host                            as imgHost, 
+            a.url                                 as url,
+            a.msg                                 as msg
+        from    (   select row_number() over (order by reg_tm desc) as row_num, *
+                    from mw_ws_event (nolock)
+                    where evt_mode = 'N'
+                    and stat = 'R'
+                    and cast (convert(varchar(10), getdate(), 112)as int) between cast(sday as int) and cast(eday as int)
+                ) a
+        where 
+            a.row_num = 1
+    </select>
+    
+    <!-- 이벤트 레이어 팝업 : 메인 노출 이벤트 1개 제공 -->
+    <select id="getEventPopup" parameterType="int" resultType="com.kt.clip2.web.common.vo.EventVO">
+        select /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getEventPopup].[07] 변경일자(20160806) */
+			a.idx				as seq, 
+			a.title				as title, 
+			a.beginDay			as beginDay, 
+			a.endDay			as endDay, 
+			a.regTm				as regTm, 
+			a.chgTm				as chgTm, 
+			a.imgUrl			as imgUrl, 
+			a.oldEvtImgUrl		as oldEvtImgUrl, 
+			a.newEvtImgUrl		as newEvtImgUrl 
+		from (select row_number() over (order by reg_tm desc) as row_num, 
+			idx, title, 
+			convert(char(10), convert(datetime, sday), 121) as beginDay, 
+			convert(char(10), convert(datetime, eday), 121)as endDay, 
+			convert(char(10), reg_tm, 121) as regTm, 
+			convert(char(10), chg_tm, 121)as chgTm, 
+			img_host + url as imgUrl, 
+			img_host + evt_img as oldEvtImgUrl, 
+			img_host + new_url as newEvtImgUrl
+		from mw_ws_event_cv2 (nolock)				 
+		where evt_mode = 'E'
+		and stat = 'R'
+		and cast (convert(varchar(10), getdate(), 112)as int) between cast(sday as int) and cast(eday as int)
+		) a
+		where a.row_num = 1
+    </select>
+    
+    <!-- 새기능 #254 관련 : 앱실행시 메인에서 공지창에 띠울 대상 ID 추출 -->
+    <select id="getNoticeMainDisplayId" resultType="int">
+         select /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getEventPopup].[08] 변경일자(20160822)  */ 
+        	top 1 idx 
+		   from mw_ws_event (nolock)
+		  where evt_mode = 'N'
+			and stat = 'R'
+			and cast (convert(varchar(10), getdate(), 112)as int) between cast(sday as int) and cast(eday as int)
+			and main_display_yn = 'Y'
+		  order by idx desc
+    </select>
+    
+    <select id="getAgreePrivInfo" resultType="com.kt.clip2.web.common.vo.AgreePrivInfoVO">
+    	SELECT /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getAgreePrivInfo].[09] 변경일자(20160825)  */
+    		   top 1 
+    		   agree_type 		AS agreeType
+			 , agree_display_yn AS agreeDisplayYn
+			 , agree_version 	AS agreeVersion
+			 , agree_url 		AS agreeUrl
+		  FROM mw_ws_agree with(nolock)
+		 WHERE agree_type = 'PRIV'
+		 ORDER BY agree_version DESC
+    </select>
+    
+    <select id="getAgreeTermInfo" resultType="String">
+    	SELECT /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getAgreeTermInfo].[10] 변경일자(20160825)  */
+    		top 1 
+    			agree_url AS agreeUrl
+		FROM mw_ws_agree with(nolock)
+		WHERE agree_type = 'TERM'
+		ORDER BY agree_version DESC
+    </select>
+    
+    <select id="getAgreeMercInfo" resultType="String">
+    	SELECT /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getAgreeMercInfo].[11] 변경일자(20160825)  */
+    		top 1 
+    			agree_url AS agreeUrl
+		FROM mw_ws_agree with(nolock)
+		WHERE agree_type = 'MERC'
+		ORDER BY agree_version DESC
+    </select>
+    
+    <select id="getUserAgreeInfo" parameterType="String" resultType="com.kt.clip2.web.common.vo.UserAgreeInfoVO">
+    	SELECT /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getUserAgreeInfo].[11] 변경일자(20160825)  */
+    		   agree
+			 , agree_pri 		AS agreePri
+			 , agree_pri_ver 	AS agreePriVer
+			 , agree_use 		AS agreeUse
+			 , agree_chg_date 	AS agreeChgDate
+			 , agree_bccard 	AS agreeBccard
+		FROM user_desc (nolock)
+		WHERE user_id = CAST(#{custId} AS INTEGER)
+    </select>
+    
+    <select id="getUserThirdPartyAgreeInfo" parameterType="String" resultType="com.kt.clip2.web.common.vo.UserThirdPartyAgreeInfoVO">
+    	SELECT /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getUserThirdPartyAgreeInfo].[12] 변경일자(20160825)  */
+    		max(case when pay_type_cd='bcpay' then agree_yn end) AS agreeBcpay,
+		 	max(case when pay_type_cd='mtic' then agree_yn end) AS agreeMtic,
+		 	max(case when pay_type_cd='bckock' then agree_yn end) AS agreeBckock
+		FROM 
+		(
+			SELECT 
+				  user_id
+				, pay_type_cd
+				, agree_yn
+			FROM 
+				user_extpay_agree (nolock)
+			WHERE 
+				user_id = CAST(#{custId} AS INTEGER)
+		) x
+		GROUP BY user_id
+    </select>
+    
+    <select id="getMemberAgreeInfo" parameterType="String" resultType="String">
+    	SELECT /* [WebCommonDao.xml].[clip2.web.common.WebCommonDao.getMemberAgreeInfo].[13] 변경일자(20160825)  */
+    		agree_content AS agreeContent
+		FROM 
+			mw_ms_memb_agree (nolock)
+		WHERE 
+			memb_id = 'bckock'
+		AND 
+			agree_title like '%이용약관'
+    </select>
+    
+    <update id="updateTermAgreeMore" parameterType="Map">
+    	UPDATE /*[WebCommonDao.xml].[clip2.web.common.WebCommonDao.updateTermAgreeMore].[14] 변경일자(20160905) */
+    		user_info
+    	SET
+    		agree_pri = #{agreePri, jdbcType=VARCHAR}
+    		, last_dt= Convert(varchar(10),Getdate(),112)
+			, last_tm= Replace(Convert(varchar(8),Getdate(),108),':','')
+    		, agree= #{agreeAd, jdbcType=VARCHAR}
+    		, mod_dtt = GETDATE()
+    		, amndr_id = 'WebCommonDao14'
+    	WHERE
+    		user_id = CAST(#{custId} AS INTEGER)
+    </update>
+    
+    <update id="userExtpayAgreeUpdate" parameterType="Map">
+    	MERGE /*[WebCommonDao.xml].[clip2.web.common.WebCommonDao.userExtpayAgreeUpdate].[15] 변경일자(20160826) */ 
+    		user_extpay_agree AS T
+		     USING (SELECT #{payTypeCd, jdbcType=VARCHAR}, CAST(#{custId} AS INTEGER) ) AS S (payTypeCd , custId)
+		     ON T.pay_type_cd = S.payTypeCd AND T.user_id = S.custId
+		     WHEN MATCHED THEN
+		           UPDATE SET agree_yn = #{agreeYn}, mod_dtt = GETDATE(), amndr_id = 'WebCommonDao15'
+		     WHEN NOT MATCHED BY TARGET THEN
+		           INSERT (user_id, pay_type_cd, agree_yn, agree_no, reg_dtm, crtr_id, amndr_id) 
+		           VALUES (#{custId, jdbcType=INTEGER}, #{payTypeCd, jdbcType=VARCHAR}, #{agreeYn, jdbcType=VARCHAR}, 1, getdate(),'WebCommonDao15','WebCommonDao15' );
+    </update>
+</mapper>

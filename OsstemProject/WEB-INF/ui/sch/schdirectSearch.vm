@@ -1,0 +1,14 @@
+#*Director 검색 *#
+<div class="popup_layer" style="border: 1px solid #ffcc99;background:#EBEBEB;z-index:99999; position:absolute; top:20px; left:2px; width:240px;max-height: 200px; overflow-y: auto;overflow-x: hidden">
+<div  style="height: 23px;color: #5e5e60;margin: 0 0 0 20px;line-height: 23px;font-size:12px; font-family:Tahoma, Geneva, sans-serif;"> <b>ff</b><span style=" margin:0 0 0 110px;"><a href="javascript:closeSearch()">X</a></span></div>
+<ul style="width:230px">
+		<li  style="width:230px">
+			<a href="javascript:directorAdd('aa')">aa</a>
+			<a href="javascript:directorAdd('bb')">bb</a>
+			<a href="javascript:directorAdd('cc')">cc</a>
+			<a href="javascript:directorAdd('dd')">dd</a>
+			<a href="javascript:directorAdd('ee')">ee</a>
+			<a href="javascript:directorAdd('ff')">ff</a>
+		</li>
+</ul>
+</div>

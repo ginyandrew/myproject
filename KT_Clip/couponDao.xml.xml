@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="clip2.web.coupon.WebCouponDao">
+	
+	<!-- 해당 쿠폰 상세 정보 -->
+	<select id="getCouponInfoByCpnId" parameterType="String" resultType="com.kt.clip2.web.coupon.vo.CouponVO">
+		select /* [WebCouponDao.xml].[clip2.web.coupon.WebCouponDao.getCouponInfoByCpnId].[01] 변경일자(20160810) */
+		substring(val_sday, 0, 5) + '-' + substring(val_sday, 5, 2)  + '-' + substring(val_sday, 7, 2) + '~' + 
+		substring(val_eday, 0, 5) + '-' + substring(val_eday, 5, 2)  + '-' + substring(val_eday, 7, 2) as validDay,
+		case when memo like '%http%' then 'link' else 'text' end infosource,													 
+		memo, info
+		from cpn_list 
+		where cpn_id = #{value}
+	</select>
+	
+	<select id="getShopIdByCpnId" parameterType="String" resultType="String">
+		select	/* [WebCouponDao.xml].[clip2.web.coupon.WebCouponDao.getShopIdByCpnId].[01] 변경일자(20160810) */
+			t.shop_id 		as shopId
+		from cpn_list c, tbl_ms_meta t
+		where c.use_name = t.shop_id
+		and c.cpn_id = #{value}
+	</select>
+</mapper>

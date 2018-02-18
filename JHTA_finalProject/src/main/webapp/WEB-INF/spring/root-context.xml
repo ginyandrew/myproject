@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context" xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.1.xsd">
+
+	<!-- Root WebApplicationContext 설정 -->
+	<!-- DateSource(DMDS) -->
+	<!-- p라는 namespace를 사용하여 param값을 설정할 수 있다 -->
+	<!-- <bean id="cp" class="org.springframework.jdbc.datasource.DriverManagerDataSource" p:driverClassName="oracle.jdbc.OracleDriver" p:url="jdbc:oracle:thin:@192.168.0.24:1521:xe" p:username="hr" p:password="hr" 
+		/> -->
+
+	<!-- JNDI로 등록한 객체 불러오기 -->
+	<!-- resource-ref="true": root경로[java:conf/env] 생략하기 -->
+	<jee:jndi-lookup id="cp" jndi-name="jdbc/myoracle" resource-ref="true" />
+
+	<!-- Mybatis -->
+	<!-- SqlSessionFactory 빈(SSFB) 등록하기 : Connection Pool 객체, mapper파일의 위치 주입 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean" p:dataSource-ref="cp" p:mapperLocations="classpath:/META-INF/mybatis/*-mapper.xml" />
+	<!-- MapperScannerConfigurer 빈(MSC) 등록하기 : mybatis 관련 dao 인터페이스들이 들어있는 패키지 경로 주입 -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer" p:basePackage="kr.co.jhta.dao" />
+
+	<!-- 업무로직이 구현된 ServiceImpl 클래스들을 빈으로 자동 등록하기 -->
+	<context:component-scan base-package="kr.co.jhta.service" />
+
+	<!-- Service Layer와 DataAccess Layer 관련 객체들의 생성, 조립 -->
+	<!-- TransactionManager를 빈으로 등록 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="cp" />
+	</bean>
+
+	<!-- tx:annotation-driven 추가 -->
+	<tx:annotation-driven />
+</beans>

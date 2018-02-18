@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.1.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+
+	<!-- Web Layer 관련 빈 등록: 모든 Controller, Resolver, View -->
+
+	<!-- Controller들을 빈으로 자동 등록하기 -->
+	<context:component-scan base-package="kr.co.jhta.controller" />
+
+	<!-- spring mvc와 관련된 각종 설정에 Annotation을 활용할 수 있도록 지원하는 다양한 빈들을 자동으로 등록되게 한다. -->
+	<mvc:annotation-driven />
+
+
+	<!-- 파일 업로드 처리를 지원하는 빈 등록 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+	</bean>
+
+	<!-- 사용자 정의 View를 빈으로 등록하기 -->
+	<!-- <bean id="customView" class="kr.co.jhta.view.CustomView"></bean> -->
+	<bean id="filedownloadView" class="kr.co.jhta.view.FileDownloadView"></bean>
+	<bean id="jsonView" class="org.springframework.web.servlet.view.json.MappingJackson2JsonView"></bean>
+	<bean id="PlanToExcelView" class="kr.co.jhta.view.PlanToExcelView"></bean>
+
+
+	<!-- viewResolver 빈 등록 -->
+
+	<mvc:view-resolvers>
+		<!-- 타일 관련 viewResolver -->
+		<bean class="org.springframework.web.servlet.view.tiles3.TilesViewResolver">
+			<!-- <property name="order" value="1"></property> -->
+		</bean>
+		<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+			<property name="prefix" value="/WEB-INF/views/"></property>
+			<!-- <property name="order" value="2"></property> -->
+		</bean>
+	</mvc:view-resolvers>
+
+
+	<bean id="tilesConfigurer" class="org.springframework.web.servlet.view.tiles3.TilesConfigurer">
+		<property name="definitions">
+			<list>
+				<value>/WEB-INF/layout/layout.xml</value>
+			</list>
+		</property>
+	</bean>
+
+	<!-- 인터셉터 빈 등록 -->
+	<bean id="loginInterceptor" class="kr.co.jhta.interceptor.LoginInterceptor">
+	</bean>
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<!-- <mvc:mapping path="/*.tm" />
+			<mvc:mapping path="/**/*.tm" />
+			<mvc:mapping path="/**/**/*.tm" /> -->
+			<mvc:mapping path="/mypage.tm"/>
+			<mvc:mapping path="/plan/make.tm"/>
+			<ref bean="loginInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+	<bean id="adminInterceptor" class="kr.co.jhta.interceptor.AdminInterceptor">
+	</bean>
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/host.tm" />
+			<mvc:mapping path="/host/*.tm" />
+			<mvc:mapping path="/host/**/*.tm" />
+			<ref bean="adminInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+
+	
+	<!-- 국제화처리 -->
+	<mvc:interceptors>
+		<!-- 언어설정용 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/*.tm" />
+			<mvc:mapping path="/**/*.tm" />
+			<mvc:mapping path="/**/**/*.tm" />
+			<ref bean="localeChangeInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+	
+	<!-- 국제화 메시지 소스 설정하기 -->
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:/META-INF/i18n/msg" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+	
+	<!-- 언어변경을 지원하는 인터셉터 -->
+	<!-- paramName이 lang인 것을 보고 페이지의 언어를 바꿔준다 -->
+	<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+		<property name="paramName" value="lang"></property>
+	</bean>
+	<!-- 지정된 로케일값을 세션객체의 속성으로 가지고 있게 한다 -->
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.SessionLocaleResolver">
+		<property name="defaultLocale" value="ko" />
+	</bean>
+</beans>

@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="kr.co.jhta.dao.CityDAO">	
+
+	
+	<!-- City 테이블 -->
+
+	<insert id="addCity" parameterType="kr.co.jhta.domain.CityVO">
+		insert into db_city
+	 	(no, name, lat, lng, state_code, details)
+	 	values
+	 	(#{no}, #{name}, #{lat}, #{lng}, #{stateCode.code}, #{details})	
+	</insert>
+	
+	<select id="getCity" resultType="kr.co.jhta.domain.CityVO">
+		select
+			no,
+			name,
+			lat,
+			lng,
+			state_code		as "stateCode.code"
+		from
+			db_city
+		order by
+			no
+	</select>
+	
+	<select id="getCityByNo" parameterType="int" resultType="kr.co.jhta.domain.CityVO">
+		select
+			no,
+			name,
+			lat,
+			lng,
+			state_code		as "stateCode.code",
+			details
+		from
+			db_city
+		where 
+			no = #{value}
+	</select>
+
+	<delete id="deleteCityByNo" parameterType="int">
+		delete from db_city
+		where no = #{value}
+	</delete>
+
+
+
+	<!-- City_Img 테이블 -->
+	<insert id="addCityImg" parameterType="kr.co.jhta.domain.CityImgVO">
+		insert into db_city_img
+	 	(city_no, filename)
+	 	values
+	 	(#{city.no}, #{fileName})	
+	</insert>
+
+	<select id="getCityImg" resultType="kr.co.jhta.domain.CityImgVO">
+		select
+			city_no 		as "city.no",
+			filename 		as fileName
+		from
+			db_city_img
+		order by
+			city_no
+	</select>
+	
+	<select id="getCityImgByCityNo" parameterType="int" resultType="kr.co.jhta.domain.CityImgVO">
+		select
+			city_no 		as "city.no",
+			filename 		as fileName
+		from
+			db_city_img
+		where 
+			city_no = #{value}
+	</select>
+	
+	<delete id="deleteCityImgByCityNo" parameterType="int">
+		delete from db_city_img
+		where city_no = #{value}
+	</delete>
+
+
+
+	<!-- StateCode 테이블 -->
+	<insert id="addStateCode" parameterType="kr.co.jhta.domain.StateCodeVO">
+		insert into db_state_code
+	 	(code, name)
+	 	values
+	 	(#{code}, #{name})	
+	</insert>
+	
+	<select id="getStateCodes" resultType="kr.co.jhta.domain.StateCodeVO">
+		select
+			code,
+			name
+		from
+			db_state_code
+		order by
+			code			
+	</select>
+	
+	<select id="getStateCodeByCode" parameterType="int" resultType="kr.co.jhta.domain.StateCodeVO">
+		select
+			code,
+			name
+		from
+			db_state_code
+		where 
+			code = #{code}
+	</select>
+	
+	<delete id="deleteStateCodeByCode" parameterType="int">
+		delete from db_state_code
+		where code = #{code}
+	</delete>
+
+
+
+	
+	<!-- 용규 -->
+	<select id="getCityByStateCode" parameterType="int" resultType="kr.co.jhta.domain.CityVO">
+		select
+			no,
+			name,
+			lat,
+			lng,
+			state_code		as "stateCode.code"
+		from
+			db_city
+		where
+			state_code = #{value}
+		order by
+			no
+	</select>
+	
+
+	<!-- 진영 -->	
+	<!-- 검색어 자동완성- 장소 이름 넣으면 dest, city 에서 no,name,category 반환 -->	 
+	<select id="getPlaceByName" parameterType="String" resultType="hashmap">			
+		select 
+			a.no 			as placeno, 
+			a.name  		as placename,
+			a.category 		as category
+		from
+			(select no, name, 'dest' as category
+			from db_destination
+			union
+			select no, name, 'city' as category
+			from db_city
+			where no >= 100 and no &lt; = 800) a
+		where a.name like '%'||#{value}||'%' 		
+		order by a.category, a.name				
+	</select>
+	
+	
+	<!-- 인기 상위 5위 도시 뽑기 -->
+	<select id="getTopFiveCityNo" resultType="hashmap">
+	<![CDATA[
+	select 
+		a.no 			as no, 
+		a.name 			as name, 
+		a.ranking 		as ranking, 
+		m.filename 		as filename
+	from 
+		(select name, no, ranking
+		from
+			(select rownum as ranking, cnt, name, no
+			from
+				(select count(*) as cnt, c.name as name, c.no as no
+				from db_views_destination v, db_destination d, db_city c
+				where v.data_no = d.no
+				and d.city_no = c.no
+				group by c.name, c.no
+				order by count(*) desc)
+			)
+		where ranking >=1 and ranking <=5) a, db_city_img m
+	where a.no = m.city_no
+	and m.filename like '%main%'	
+	]]>
+	</select>
+	
+	
+	
+	<!-- 성인 -->
+	<select id="getRankedCityList" parameterType="map" resultType="kr.co.jhta.domain.CityVO">
+		SELECT
+			C.NO as no
+			,C.NAME as name
+			,C.LAT as lat
+			,C.LNG as lng
+			,C.STATE_CODE as "stateCode.code"
+			,S.NAME as "stateCode.name"
+			,C.DETAILS as details
+		FROM
+			CITY_VIEWS_VIEW V
+			,DB_CITY C
+			,DB_STATE_CODE S
+		WHERE
+			RANK >= #{START}
+		AND
+			RANK &lt;= #{END}
+		AND
+			V.CITY_NO = C.NO
+		AND
+			C.STATE_CODE = S.CODE
+		ORDER BY
+			V.RANK ASC
+	</select>
+	<select id="getCityData" resultType="kr.co.jhta.domain.CityVO">
+		SELECT
+			C.NO,
+			C.NAME,
+			C.LAT,
+			C.LNG,
+			C.STATE_CODE		as "stateCode.code",
+			S.NAME 				as "stateCode.name",
+			C.DETAILS
+		FROM
+			DB_CITY C,
+			DB_STATE_CODE S
+		WHERE
+			C.STATE_CODE = S.CODE			
+		ORDER BY
+			C.NO, C.NAME
+	</select>
+	<select id="getCityDataByNo" parameterType="int" resultType="kr.co.jhta.domain.CityVO">
+		SELECT
+			C.NO,
+			C.NAME,
+			C.LAT,
+			C.LNG,
+			C.STATE_CODE		as "stateCode.code",
+			SC.NAME 			as "stateCode.name",
+			C.DETAILS
+		FROM
+			DB_CITY C,
+			DB_STATE_CODE SC
+		WHERE
+			C.STATE_CODE = SC.CODE
+		AND C.NO = #{value}
+	</select>
+	<select id="getCityImgFileNameByNo" parameterType="int" resultType="string">
+		SELECT
+			FILENAME
+		FROM
+			DB_CITY_IMG
+		WHERE
+			CITY_NO = #{value}
+	</select>
+	<update id="updateCity" parameterType="kr.co.jhta.domain.CityVO">
+		UPDATE
+			DB_CITY
+		<set>
+			<if test="name != null">NAME = #{name},</if>
+			<if test="lat != null">LAT = #{lat},</if>
+			<if test="lng != null">LNG = #{lng},</if>
+			<if test="stateCode.code != null">STATE_CODE = #{stateCode.code},</if>
+			<if test="details != null">DETAILS = #{details},</if>
+		</set>
+		WHERE
+			NO = #{no}
+	</update>
+	<!-- 주호 -->
+	
+	<!-- 지훈 -->
+	
+	<!-- 명신 -->
+	
+</mapper>

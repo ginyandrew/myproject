@@ -1,0 +1,209 @@
+##강의수강안내 리스트 (검색)
+
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schSendListSearchView.js'></script>
+
+<!-- container -->
+<div id="container">
+	
+	<div class="titarea">
+		<h2>강의수강 안내</h2>
+	</div>
+
+	<form id="frm5" action="" method="post">
+	<input type="hidden" name="gb01s" id="gb01s" value="$!gb01">
+	<input type="hidden" name="gb02s" id="gb02s" value="$!gb02">
+	<input type="hidden" name="sta_dt" id="sta_dt" value="$!stadt">
+	<input type="hidden" name="fin_dt" id="fin_dt" value="$!findt">
+	</form> 
+	
+	<form id="frm1" action="$!WEB_ROOT/sch/sch.do?method=schSendListSearchView" method="post">
+	<table width="100%" class="tb_view1">
+		<input type="hidden" name="pageNo" id="pageNo" value="$!curPage">
+		<colgroup>
+		<col width="9%" />
+		<col width="9%" />
+		<col width="*" />
+		</colgroup>
+		
+		<tr>
+			<th scope="row" rowspan="2">Course</th>
+			<th>강연회</th>
+			<td>
+              <input  type="checkbox" name="gb101" value="01"><label><span ></span>연구회</label> 
+              <input  type="checkbox" name="gb101" value="02"><label for="checkbox2"><span></span>보수교육  </label> 
+              <input  type="checkbox" name="gb101" value="03"><label for="checkbox3"><span></span>Faculty Seminar</label> 
+              <input  type="checkbox" name="gb101" value="04"><label for="checkbox4"><span></span>수요화상  </label> 
+              <input  type="checkbox" name="gb101" value="05"><label for="checkbox5"><span></span>Osstem Meeting</label> 
+            </td>
+		</tr>
+		
+		<tr>
+			<th class="bor_l">연수회</th>
+			<td>
+              <input type="checkbox" name="gb102" value="01"><label for="checkbox1"><span></span>Basic  </label> 
+              <input type="checkbox" name="gb102" value="02"><label for="checkbox1"><span></span>Advanced    </label> 
+              <input type="checkbox" name="gb102" value="03"><label for="checkbox1"><span></span>Master  </label> 
+              <input type="checkbox" name="gb102" value="04"><label for="checkbox1"><span></span>One-day Course</label> 
+            </td>
+		</tr>
+		
+		<tr>
+		
+			<th scope="row" colspan="2">강의 일자</th>
+			<td>
+				<div class="date_input">
+	                <input value="" type="text" name="stDates" id="sch_sta_dt">
+	                <span class="search-submit" >
+	            </div>
+	            <div class="date_txt">~</div>
+	            <div class="date_input marr20">
+	                <input value="" type="text" name="fiDates" id="sch_fin_dt">
+	                <span class="search-submit" >
+	            </div>
+	            <span class="btn_pack cttin"><a href="#" onclick="setDate(1)">1개월</a></span>
+	            <span class="btn_pack cttin"><a href="#" onclick="setDate(3)">3개월</a></span>
+	            <span class="btn_pack cttin"><a href="#" onclick="setDate(6)">6개월</a></span>
+	            <span class="btn_pack cttin"><a href="#" onclick="setDate(12)">1년</a></span>
+			</td>
+			
+		</tr>
+	</table>
+	</form>
+	
+	<!-- btn box(bottom) -->
+	<div class="box_btnarea padb10">
+	<a href="" class="searchbtn alignr" onclick="submitForm();return false;">검색</a>
+	</div>
+	<!-- //btn box(bottom) -->
+
+ 	<form id="frm2" action="$!WEB_ROOT/sch/sch.do?method=schSendListDetailReView" method="post">	
+		<input type="hidden" id="schId" name="schId" value="">
+		<input type="hidden" id="sendId" name="sendId" value="">
+		<input type="hidden" id="cnt" name="cnt" value="">
+    </form>
+
+	<table width="100%" class="tb_list04">
+		<colgroup>
+		<col width="5%" />
+		<col width="6%" />
+		<col width="12%" />
+		<col width="*" />
+		<col width="9%" />
+		<col width="12%" />
+		<col width="8%" />
+		<col width="8%" />
+		</colgroup>
+		<thead>
+			<tr>
+				<th scope="row">No.</th>
+				<th scope="row" colspan="2">구분</th>
+				<th scope="row">제목</th>
+				<th scope="row">강의일자</th>
+				<th scope="row" colspan="2">수신자 정보</th>
+				<th scope="row"> 발송일시</th>
+			</tr>
+		</thead>
+		<tbody>
+			#foreach($sl in $!sendList)
+			#set($ranking = $sl.get("RANKING"))
+			#set($name = $sl.get("NAME"))
+			#set($cnt = $sl.get("CNT") )
+			#set($title = $sl.get("TITLE"))
+			#set($ranking = $sl.get("RANKING"))
+			#set($sendId = $sl.get("SEND_ID"))
+			#set($gb01 = $sl.get("SCH_GB_01"))
+			#set($gb02 = $sl.get("SCH_GB_02"))
+			#set($stadt = $sl.get("STADT"))
+			#set($findt = $sl.get("FINDT"))
+			#set($senddt = $sl.get("SENDDT"))
+			#set($sendtm = $sl.get("SENDTM"))
+			#set($schId = $sl.get("SCH_ID"))
+			#set($psnId = $sl.get("PSN_ID"))
+			<tr>
+				<td>$ranking</td>
+				
+				<td>
+				#if($gb01=="01")
+					강연회
+				</td>
+				<td>
+					#if($gb02=="01")
+					연구회
+					#elseif($gb02=="02")
+					보수교육
+					#elseif($gb02=="03")
+					Faculty Seminar
+					#elseif($gb02=="04")
+					수요화상
+					#elseif($gb02=="05")
+					Osstem Meeting
+					#end	
+				#end
+				
+				#if ($gb01=="02")
+					연수회
+				</td>
+				<td>
+					#if($gb02=="01")
+					Basic
+					#elseif($gb02=="02")
+					Advanced
+					#elseif($gb02=="03")
+					Master
+					#elseif($gb02=="04")
+					One-day Course
+					#end
+				#end
+				</td>
+				<td id="$schId"><a href="#" id="$sendId" name="$cnt" onclick="searchSch(this);return false;">$title</a></td>
+				
+				<td>
+				#if($gb01=="01")
+					$stadt
+				#else
+					$stadt~ <br/>$findt
+				#end
+				</td>
+				
+				## 여기서 cnt는 자기자신을 포함한 숫자이다. 1명일 때는 $ name 만 나오고, 2명 이상일 땐 name 외 cnt-1 명이라고 나와야 함.
+				<td>
+				#if($cnt > 1)
+				[<b>$name</b> 외  $sl.get("MINUSCNT") 명]
+				#else
+				[<b>$name</b>]
+				#end
+				</td>
+				<td><span class="btn_pack sch gray"><button type="button" id="$sendId" onclick="popupSendList(this)">상세정보</button></span></td>
+				<td>$senddt<br>$sendtm</td>
+			</tr>
+			#end
+		</tbody>
+	</table>
+
+
+
+	<!-- paging -->
+    #if($!sendList.size() > 0)
+		$!page
+	#end
+	
+	<!-- btn box(bottom) -->
+	<div class="box_btnarea" id="btns">
+	
+		<p class="alignl">
+			<span class="btn_pack basic"><a href="#" onclick="excelDown();return false;"><em class="ico_exdown"></em>엑셀 다운로드</a></span>
+		</p>
+	
+		<p class="alignr">
+			<span class="btn_pack basic"><a href="$!WEB_ROOT/sch/sch.do?method=schSendListRegistView"><em class="ico_history"></em>등록</a></span>
+		</p>
+	
+	</div>
+	<!-- //btn box(bottom) -->
+
+	<!-- 이 자리에 팝업이 생성/삭제된다.-->
+
+
+</div>
+</div>
+<!-- //container -->

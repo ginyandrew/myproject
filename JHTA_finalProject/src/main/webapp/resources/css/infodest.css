@@ -1,0 +1,148 @@
+@import url('http://fonts.googleapis.com/earlyaccess/nanumgothic.css');
+
+.rate_chart_txt {
+	margin-left: 30px;
+}
+
+.chart_img, .rate_chart_value_txt {
+	margin-left: 5px;
+	margin-right: 5px;
+}
+
+.chart_img {
+	width: 40px;
+}
+.item {
+	margin-left : 10%;
+}
+.progress {
+	line-height: 20px;
+}
+#myCarousel{
+	height : 500px;
+}
+
+.carousel-inner{
+	width :100%;
+}
+.photo {
+	height: 300px;
+	width: 300px;
+	background: gray;
+	margin-top: 90px;
+	margin-left: 390px;
+	margin-right: 320px;
+}
+
+.glyphicon-paperclip, .glyphicon-calendar {
+	font-size: 30px;
+}
+
+
+.carousel-inner {
+	height: 500px;
+}
+
+#placeinfo {
+	margin-top: 10px;
+	border: 1px solid black;
+	background: #f2f2f2;
+}
+
+.think, p {
+	font-size: 15px;
+		
+
+}
+
+#btnfont {
+	float: right;
+}
+
+#erase {
+	float: right;
+	text-align: center;
+	width: 22px;
+	height: 20px;
+	background: #f2f2f2;
+	margin : 5px;
+}
+.review{
+	border : 1px solid black ;
+	width  : 1000px;
+	
+}
+.reviewlist {
+	margin-top : 10px;
+	margin-left: 5px;
+	margin-right:4px;
+	background-color: #f2f2f2;
+}
+#good, #soso, #bad {
+	height: 80px;
+	width: 80px;
+}
+
+.well {
+	height: 100%;
+	width: 100%;
+}
+ 
+body, table, div, p {font-family: 'Nanum Gothic Coding';}
+
+
+.form-controler {
+	font-size: 15px;
+	width: 200px;
+}
+
+div[name="review"] {
+	height: 150px;
+}
+
+.review-control {
+	width : 750px;
+	height: 150px;
+	margin: 5px;
+}
+
+.form-group {
+	width: 80%;
+	margin: 0 auto;
+}
+
+.review {
+	width: 70%;
+	height: 500px;
+	margin: 0 auto;
+	margin-top: 10px;
+	overflow-y: scroll;
+}
+
+div .col-md-4 {
+	height: 360px;
+	background: #f2f2f2;
+	border: 3px solid white;
+}
+
+#text {
+	resize: none;
+	font-size: 15px;
+	width: 100%;
+	height: 170px;
+	margin-top: 10px;
+	margin-bottom: 20px;
+}
+#author, #regdate {
+	margin : 5px;
+}
+
+div .col-md-2 {
+	font-size: 12px;
+}
+#detail {
+	border : 1px solid balck ;
+}
+#description{
+	border : 1px solid balck;
+}

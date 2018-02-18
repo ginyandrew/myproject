@@ -1,0 +1,197 @@
+##등록일정조회-주간
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schWeekSearchView.js'></script>
+
+<div id="container">
+
+	<div class="titarea">
+	    <h2>등록일정 조회</h2>
+	</div>
+
+	<!-- CSS풀소스-->
+	<div class="bp_calendar">
+	
+		<form id="frm1" action="" method="post">
+			<input type="hidden" name="schId" id="schId" value="">
+		</form>
+		
+		<!-- 달력 상단 -->
+		<div class="h_cal" style="background-color:gray;">
+	
+			<div class="cld_left" >
+			
+			<form id="frm2" action="" method="post">
+				<input type="hidden" id ="hidsch_gb_01" name="sch_gb_01" value="$!sch_gb_01">
+				<input type="hidden" id ="hidsch_gb_02" name="sch_gb_02" value="$!sch_gb_02">
+			</form>
+			
+				<select id="sch_gb_01" onchange="schgbChange(this.value)" class="sel" style="width:80px;height:30px;" >
+					<option value="01" #if("01" == "$!sch_gb_01") selected="selected"#end>강연회</option>
+					<option value="02" #if("02" == "$!sch_gb_01") selected="selected"#end>연수회</option>
+				</select>
+				<select id="sch_gb_02" onchange="divChange(this.value)" class="sel" style="width:150px;height:30px;">
+					<option value="01">연구회</option>
+					<option value="02">보수교육</option>
+					<option value="03">Faculty Seminar</option>
+					<option value="04">수요화상</option>
+					<option value="05">Osstem meeting</option>
+				</select>
+				
+				
+				
+			</div>
+	
+			<div class="cld_center">
+				<a title="이전" class="sp cld_pre" 
+				href="$!WEB_ROOT/sch/sch.do?method=schWeekSearchView&year=$!prev_year&
+				month=$!prev_month&day=$!prev_day&sch_gb_01=$!sch_gb_01&sch_gb_02=$!sch_gb_02"></a>
+					#set($hash_temp=$arr_date_week_list.get(0))
+					#set($start_year=$!hash_temp.get("YEAR"))
+					#set($start_month=$!hash_temp.get("MONTH"))
+					#set($start_week=$!hash_temp.get("WEEK_DAY"))
+					<input type="hidden" id ="year" value="$year">
+					<input type="hidden" id ="month" value="$month">
+					<input type="hidden" id ="day" value="$day">
+					<span> $start_year 년  $start_month 월 $start_week 주차 </span>
+				<a title="다음" class="sp cld_next" 
+				href="$!WEB_ROOT/sch/sch.do?method=schWeekSearchView&year=$!next_year&
+				month=$!next_month&day=$!next_day&sch_gb_01=$!sch_gb_01&sch_gb_02=$!sch_gb_02"></a>
+			</div>
+				
+			<div class="cld_chk" >
+				<a href="#" onclick="movePage('schYearSearchView');return false;"><button type=button>연간</button></a>
+				<a href="#" onclick="movePage('schMonthSearchView');return false;"><button type=button >월간</button></a>
+				<a href="#" onclick="movePage('schWeekSearchView');return false;"><button type=button class="on">주간</button></a>
+			</div>
+	
+		</div>
+		<!-- //달력 상단 끝 -->
+	
+	
+	
+		<!-- 달력 하단 -->
+		<div class="cal_week">
+		
+			<table id="weekTable" width="$!tableWidth px">		## 전체 픽셀 
+				<colgroup>
+				<col width="100px" />
+				#foreach($i in $!widths)		<!-- 1은 일요일, 7일은 토요일 -->
+					<col width="$i px" />
+				#end
+				</colgroup>
+			
+				<thead>
+					<tr>
+					<th class="frst_bd" scope="col"></th>
+						#foreach($hash_week_day_list in $arr_date_week_list)
+							#set($str_month = $hash_week_day_list.get("MONTH").toString())		## 월
+							#set($str_day = $hash_week_day_list.get("DATE").toString())			## 일
+							#set($str_week = $hash_week_day_list.get("WEEK").toString())		## 요일
+							## 월 2자리로 셋팅
+							#if($str_month.length() == 1)
+								#set($str_month="0"+$str_month)
+							#end
+							## 일 2자리로 셋팅
+							#if($str_day.length() == 1)
+								#set($str_day="0"+$str_day)
+							#end
+							#set($class_nm="calendar_title_black")
+							
+							<th scope="col">$str_month.$str_day <span>($str_week)</span></th>
+						
+						#end
+					</tr>
+				</thead>
+		
+				<tbody>
+					<!--	스케줄은 각 table .day 위로 끼어들어
+					<div class="wrap_schedule" style=" height:88px; top:24px;">
+						<p><a href="#">2016  Kick-Off Meeting 제목 제목 </a></p>
+					</div>
+					-->
+					<tr>
+						<th class="first_low">오전 6시</th>
+
+						#foreach($hash_week_day_list in $arr_date_week_list)
+							#set($weekDay =  $hash_week_day_list.get("WEEK").toString())	
+							<td rowspan="19">
+									#if($!days.contains($weekDay))
+										#foreach($sch in $!schList)
+											#if($sch.get("WEEKDAY") == $weekDay)
+												<div  class="schedule_list" >
+													<!-- 처음 한칸 13 두번재부턴 26씩 증가 두칸39 세칸 65 -->
+													<!-- 위치는 처음 0, 50, 75 .. 150까진 25씩 증가/  이후부턴 175부터 375까진 2를 더해주고,/ 304부터 400까진 4를 더해줌, 400이후엔 6을 더해줌. -->
+													<div class="wrap_schedule" style="height:$sch.get("HOURS")px; top:$sch.get("STATIME")px;">
+														<p>
+															<a href="#" onclick="moveSchDetail($sch.get("SCH_ID"));return false;">
+																<span style="overflow: hidden; text-overflow: ellipsis; display: -webkit-box;
+																-webkit-line-clamp: $sch.get("THEHOUR");-webkit-box-orient: vertical; word-wrap:break-word;"> 
+																$sch.get("TITLE") 
+																</span>
+															</a>
+														</p>
+													</div>
+													<table class="day" >
+														#foreach($i in[1..19])	 
+															<tr width="100%;"> <td></td> </tr>
+														#end
+													</table>
+												</div>
+											#end
+										#end
+									#else
+										<div  class="schedule_list" >
+											<table class="day" >
+												#foreach($i in[1..19])	 
+													<tr width="100%;"> <td></td> </tr>
+												#end
+											</table>
+										</div>
+									#end
+									
+							</td>
+						#end
+		
+					</tr>
+					<!-- //이 하나의 TR 안에 아래 th/td가 전부 다 들어있음.-->
+					
+					<!-- 테이블 왼쪽 시간 부분 -->
+					#foreach($i in [7..12])
+					<tr> <th>오전 $i시</th> </tr>
+					#end
+					#foreach($i in [1..12])
+					<tr> <th>오후 $i시</th> </tr>
+					#end
+					<!-- //테이블 왼쪽 시간 부분 -->
+		
+				</tbody>
+			</table>
+		</div>
+		<!-- //달력 하단 -->
+	
+	</div>
+	<!-- //CSS풀소스 끝 -->
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

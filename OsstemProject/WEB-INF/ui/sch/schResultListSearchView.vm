@@ -1,0 +1,202 @@
+##강의신청 관리 리스트
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schResultListSearchView.js'></script>
+
+<!-- container -->
+<div id="container">
+	<div class="titarea">
+		<h2>강의신청 관리</h2>
+	</div>
+
+	<form id="frm5" action="" method="post">
+	<input type="hidden" name="gb01s" id="gb01s" value="$!gb01">
+	<input type="hidden" name="gb02s" id="gb02s" value="$!gb02">
+	<input type="hidden" name="sta_dt" id="sta_dt" value="$!stadt">
+	<input type="hidden" name="fin_dt" id="fin_dt" value="$!findt">
+	</form>
+	
+	
+	<form id="frm1" action="$!WEB_ROOT/sch/sch.do?method=schResultListSearchView" method="post">
+	<table width="100%" class="tb_view1">
+		<input type="hidden" name="pageNo" id="pageNo" value="$!curPage">
+		<colgroup>
+		<col width="9%" />
+		<col width="9%" />
+		<col width="*" />
+		</colgroup>
+		
+		<tr>
+			<th scope="row" rowspan="2">Course</th>
+			<th>강연회</th>
+			<td>
+              <input  type="checkbox" name="gb101" value="01"><label><span ></span>연구회</label> 
+              <input  type="checkbox" name="gb101" value="02"><label for="checkbox2"><span></span>보수교육  </label> 
+              <input  type="checkbox" name="gb101" value="03"><label for="checkbox3"><span></span>Faculty Seminar</label> 
+              <input  type="checkbox" name="gb101" value="04"><label for="checkbox4"><span></span>수요화상  </label> 
+              <input  type="checkbox" name="gb101" value="05"><label for="checkbox5"><span></span>Osstem Meeting</label> 
+            </td>
+		</tr>
+		
+		<tr>
+			<th class="bor_l">연수회</th>
+			<td>
+              <input type="checkbox" name="gb102" value="01"><label for="checkbox1"><span></span>Basic  </label> 
+              <input type="checkbox" name="gb102" value="02"><label for="checkbox1"><span></span>Advanced    </label> 
+              <input type="checkbox" name="gb102" value="03"><label for="checkbox1"><span></span>Master  </label> 
+              <input type="checkbox" name="gb102" value="04"><label for="checkbox1"><span></span>One-day Course</label> 
+            </td>
+		</tr>
+
+		<tr>
+		
+			<th scope="row" colspan="2">강의 일자</th>
+			<td>
+				<div class="date_input">
+	                <input value="" type="text" name="stDates" id="sch_sta_dt">
+	                <span class="search-submit" >
+	            </div>
+	            <div class="date_txt">~</div>
+	            <div class="date_input marr20">
+	                <input value="" type="text" name="fiDates" id="sch_fin_dt">
+	                <span class="search-submit" >
+	            </div>
+	            <span class="btn_pack cttin"><a href="#" onclick="setDate(1)">1개월</a></span>
+	            <span class="btn_pack cttin"><a href="#" onclick="setDate(3)">3개월</a></span>
+	            <span class="btn_pack cttin"><a href="#" onclick="setDate(6)">6개월</a></span>
+	            <span class="btn_pack cttin"><a href="#" onclick="setDate(12)">1년</a></span>
+			</td>
+			
+		</tr>
+
+	</table>
+	</form>
+	
+	<form id="frm2" action="$!WEB_ROOT/sch/sch.do?method=schResultManualRegistBySchIdView" method="post">	
+		<input type="hidden" id="schId" name="schId" value="">
+    </form>
+    
+	<!-- btn box(bottom) -->
+	<div class="box_btnarea padb10">
+	<a href="" class="searchbtn alignr" onclick="submitForm();return false;">검색</a>
+	</div>
+	<!-- //btn box(bottom) -->
+
+	<table width="100%" class="tb_list04 ">
+		<colgroup>
+		<col width="5%" />
+		<col width="6%" />
+		<col width="12%" />
+		<col width="*" />
+		<col width="15%" />
+		<col width="12%" />
+		<col width="8%" />
+		</colgroup>
+		
+		<thead>
+			<tr>
+				<th scope="row">No.</th>
+				<th scope="row" colspan="2">구분</th>
+				<th scope="row" >제목</th>
+				<th scope="row" >강의일자</th>
+				<th scope="row"  colspan="2">응답자 정보</th>
+			</tr>
+		</thead>
+		#foreach($sl in $!sendList)
+		 
+		#set($gb01 = $sl.get("GB01"))
+		#set($gb02 = $sl.get("GB02"))
+		#set($title = $sl.get("TITLE"))
+		#set($schId = $sl.get("SCH_ID"))
+		#set($name = $sl.get("NAME"))
+		#set($cnt = $sl.get("CNT"))
+		#set($stadt = $sl.get("STA_Dt"))
+		#set($findt = $sl.get("FIN_Dt"))
+		#set($ranking = $sl.get("RANKING"))
+		<tr>
+			<td>$ranking</td>
+			<td>
+				#if($gb01=="01")
+					강연회
+				</td>
+				<td>
+					#if($gb02=="01")
+					연구회
+					#elseif($gb02=="02")
+					보수교육
+					#elseif($gb02=="03")
+					Faculty Seminar
+					#elseif($gb02=="04")
+					수요화상
+					#elseif($gb02=="05")
+					Osstem Meeting
+					#end	
+				#end
+				
+				#if ($gb01=="02")
+					연수회
+				</td>
+				<td>
+					#if($gb02=="01")
+					Basic
+					#elseif($gb02=="02")
+					Advanced
+					#elseif($gb02=="03")
+					Master
+					#elseif($gb02=="04")
+					One-day Course
+					#end
+				#end
+			</td>
+			<td><a name="$schId" id="$cnt" href="#" onclick="searchSch(this);">$title</a></td>
+			<td>
+				#if($gb01=="01")
+					$stadt
+				#else
+					$stadt~ $findt
+				#end
+			</td>
+			<td>
+			#if($cnt == "0")
+			[<b>$name</b>]</td>
+			#else
+			[<b>$name</b> 외 $cnt명]</td>
+			#end
+			<td><span class="btn_pack sch gray"><button type="button" id="$schId" onclick="popupSendList($schId)">상세정보</button></span></td>
+		</tr>
+		#end
+		
+		</table>
+
+		<form id="frm3" action="$!WEB_ROOT/sch/sch.do?method=schResultPsnDetailView" method="post">
+			<input type="hidden" id="psn_id" name="psn_id" value="">
+			<input type="hidden" id="sch_id" name="sch_id" value="">
+			<input type="hidden" id="sawonId" name="sawonId" value="">
+		</form>
+		<form id="frm4" action="$!WEB_ROOT/sch/sch.do?method=schResultManualRegistView" method="post"></form>
+		
+		<!-- paging -->
+	    #if($!sendList.size() > 0)
+			$!page
+		#end
+		<!-- //paging -->
+		
+		<!-- <div class="box_btnarea mart15">
+		<a href="" class="myButton">등록</a>
+		</div>
+		-->
+		
+		<!-- btn box(bottom) -->
+		<div class="box_btnarea" id="btns">
+		<p class="alignl">
+			<span class="btn_pack basic"><a href="#" onclick="excelDown();return false;"><em class="ico_exdown"></em>엑셀 다운로드</a></span>
+		</p>
+		<p class="alignr">
+			<span class="btn_pack basic"><a href="#" onclick="manualRegist();"><em class="ico_history"></em>등록</a></span>
+		</p>
+		</div>
+		<!-- //btn box(bottom) -->
+	</div>
+</div>
+<!-- //container -->
+
+
+ 

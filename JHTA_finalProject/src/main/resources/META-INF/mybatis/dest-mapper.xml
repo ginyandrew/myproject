@@ -1,0 +1,807 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+	PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	
+<mapper namespace="kr.co.jhta.dao.DestDAO">	
+
+	 
+	<!-- Destination 여행지 테이블  -->
+	
+	<insert id="addDest" parameterType="kr.co.jhta.domain.DestVO">
+		insert into db_destination
+	 	(no, address, lat, lng, name, details, contact, opentime, site, city_no )
+	 	values
+	 	(dest_seq.nextval, #{address}, #{lat}, #{lng}, #{name}, #{details}, #{contact}, #{openTime}, #{site}, #{city.no})	
+	</insert>
+	
+	<select id="getDest" resultType="kr.co.jhta.domain.DestVO">
+		select
+			no,
+			address,
+			lat,
+			lng,
+			name,
+			details,
+			contact,
+			opentime 		as openTime,
+			site,
+			city_no 		as "city.no"
+		from
+			db_destination
+		order by
+			no
+	</select>
+	
+	<select id="getDestByNo" parameterType="int" resultType="kr.co.jhta.domain.DestVO">
+		select
+			no,
+			address,
+			lat,
+			lng,
+			name,
+			details,
+			contact,
+			opentime 		as openTime,
+			site,
+			city_no 		as "city.no"
+		from
+			db_destination
+		where 
+			no = #{value}
+	</select>
+
+	<delete id="deleteDestByNo" parameterType="int">
+		delete from db_destination
+		where no = #{value}
+	</delete>
+	
+	
+	
+	 
+	<!-- Destination_Img 여행지 사진 테이블 -->
+	
+	<insert id="addDestImg" parameterType="kr.co.jhta.domain.DestImgVO">
+		insert into db_destination_img
+	 	(dest_no, filename)
+	 	values
+	 	(#{dest.no}, #{fileName})
+	</insert>
+	
+	<select id="getDestImg" resultType="kr.co.jhta.domain.DestImgVO">
+		select
+			dest_no			as "dest.no",
+			filename
+		from
+			db_destination_img
+		order by
+			dest_no
+	</select>
+	
+	<select id="getDestImgByNo" parameterType="int" resultType="kr.co.jhta.domain.DestImgVO">
+		select
+			dest_no			as "dest.no",
+			filename
+		from
+			db_destination_img
+		where 
+			dest_no = #{value}
+	</select>
+
+	<delete id="deleteDestImgByNo" parameterType="int">
+		delete from db_destination_img
+		where dest_no = #{value}
+	</delete>
+	<select id="getDestImgByDestNo" parameterType="int" resultType="kr.co.jhta.domain.DestImgVO">
+		SELECT 
+  			I.FILENAME
+		FROM 
+  			DB_DESTINATION D 
+  			,DB_DESTINATION_IMG I
+		WHERE
+  			D.NO = I.DEST_NO
+  		AND 
+  			I.DEST_NO = #{VALUE}
+	</select>
+	
+	
+	
+	 
+	<!-- Category Code 여행지 카테고리대분류 테이블 -->
+	
+	<insert id="addCategoryCode" parameterType="kr.co.jhta.domain.CategoryCodeVO">
+		insert into db_category_code
+	 	(code, name)
+	 	values
+	 	(#{code}, #{name})	
+	</insert>
+	
+	<select id="getCategoryCode" resultType="kr.co.jhta.domain.CategoryCodeVO">
+		select
+			code,
+			name
+		from
+			db_category_code
+		order by
+			code
+	</select>
+	
+	<select id="getCategoryCodeByCode" parameterType="int" resultType="kr.co.jhta.domain.CategoryCodeVO">
+		select
+			code,
+			name
+		from
+			db_category_code
+		where 
+			code = #{code}
+	</select>
+
+	<delete id="deleteCategoryCodeByCode" parameterType="int">
+		delete from db_category_code
+		where code = #{code}
+	</delete>
+	
+	
+	
+	
+	<!-- Destination_Category 여행지 카테고리 테이블 -->
+	
+	<insert id="addDestCategory" parameterType="kr.co.jhta.domain.DestCategoryVO">
+		insert into db_destination_category 
+	 	(dest_no, cate_code)
+	 	values
+	 	(#{dest.no}, #{cateCode.code})	
+	</insert>
+	
+	<select id="getDestCategory" resultType="kr.co.jhta.domain.DestCategoryVO">
+		select
+			dest_no 		as "dest.no",
+			cate_code 		as "cateCode.code"
+		from
+			db_destination_category
+		order by
+			cate_code
+	</select>
+	
+	<select id="getDestCategoryByDestNo" parameterType="int" resultType="kr.co.jhta.domain.DestCategoryVO">
+		select
+			dest_no 		as "dest.no",
+			cate_code 		as "cateCode.code"
+		from
+			db_destination_category
+		where 
+			dest_no = #{value}
+	</select>
+	
+	<select id="getDestCategoryByCategory" parameterType="int" resultType="kr.co.jhta.domain.DestCategoryVO">
+		select
+			dest_no 		as "dest.no",
+			cate_code 		as "cateCode.code"
+		from
+			db_destination_category
+		where 
+			cate_code = #{value}
+	</select>	
+
+	<delete id="deleteDestCategoryByCategory" parameterType="int">
+		delete from db_destination_category
+		where cate_code = #{value}
+	</delete>
+	
+	
+	
+	
+	<!-- Review 여행지 후기 테이블 -->
+	
+	<insert id="addReview" parameterType="kr.co.jhta.domain.ReviewVO">
+		insert into db_review
+	 	(no, reg_date, rating, data, dest_no, user_no)
+	 	values
+	 	(memo_seq.nextval, to_char(sysdate, 'yyyymmddhh24miss'), #{rating}, #{data}, #{dest.no}, #{user.no})	
+	</insert>
+	
+	<select id="getReview" resultType="kr.co.jhta.domain.ReviewVO">
+		select
+			no, 
+			reg_date 		as regDate, 
+			rating, 
+			data, 
+			dest_no 		as "dest.no", 
+			user_no 		as "user.no"
+		from
+			db_review
+		order by
+			no
+	</select>
+	
+	<select id="getReviewbyNo" parameterType="int" resultType="kr.co.jhta.domain.ReviewVO">
+		select
+			no, 
+			reg_date 		as regDate, 
+			rating, 
+			data, 
+			dest_no 		as "dest.no", 
+			user_no 		as "user.no"
+		from
+			db_review
+		where 
+			no = #{value}
+	</select>
+
+	<delete id="deleteReviewbyNo" parameterType="int">
+		delete from db_review
+		where no = #{value}
+	</delete>
+
+	
+	<!-- db_views_destination 하나의 여행지/일정에 조회수 추가-->	
+	<insert id="addviews" parameterType="map">
+		insert into db_views_destination
+	 	(data_no, user_no)
+	 	values
+	 	(#{DATANO}, #{USERNO})	
+	</insert>
+	
+	<!-- db_views_destination 하나의 여행지/일정에 조회수 반환-->	
+	<select id="countReview"  parameterType="int" resultType="int">
+		select 	count(*)
+		from 	db_views_destination
+		where 	data_no = #{value}
+	</select>
+
+
+
+	
+	<!-- 용규 -->
+	<select id="getDestCateByCategory" parameterType="int" resultType="kr.co.jhta.domain.DestCategoryVO">
+		select
+			dest_no 		as "dest.no",
+			cate_code 		as "cateCode.code"
+		from
+			db_destination_category
+		where 
+			cate_code = #{value}
+	</select>	
+	
+	<select id="getDestListByCityNo" parameterType="int" resultType="kr.co.jhta.domain.DestVO">
+		select
+			no,
+			address,
+			lat,
+			lng,
+			name,
+			details,
+			contact,
+			opentime 		as openTime,
+			site,
+			city_no 		as "city.no"
+		from
+			db_destination
+		where
+			city_no = #{value}
+	</select>
+	
+	<select id="getReviewListbyNo" parameterType="int" resultType="kr.co.jhta.domain.ReviewVO">
+		select
+			no, 
+			reg_date 		as regDate, 
+			rating, 
+			data, 
+			dest_no 		as "dest.no", 
+			user_no 		as "user.no"
+		from
+			db_review
+		where 
+			no = #{value}
+	</select>
+	
+	<select id="getSampleDestByCityNo" parameterType="int"
+		resultType="kr.co.jhta.domain.DestVO">
+		SELECT
+		NO
+		FROM
+		DB_DESTINATION
+		WHERE
+		CITY_NO = #{value}
+		AND ROWNUM=1
+	</select>
+	
+	<!-- 진영 -->
+	<!-- views_destination 가장 많은 사용자가 등록된 일정 1~3위 반환-->	
+	<select id="getTopThreePlanNo" resultType="kr.co.jhta.domain.PlanVO">
+		select  
+			data_no 		as no  
+		from (select 
+				rownum as ranking, 
+				data_no, 
+				cnt 
+          	  from 
+          	  	(select 
+          	  		data_no, 
+          	  		count(*) as cnt
+                 from 
+                 	db_views_plan
+                 group by data_no
+                 order by count(*) desc
+                 )
+      		  )
+		where 
+			ranking >=1 and ranking &lt;=3 
+	</select>
+	
+	<!-- 특정 도시번호를 넣으면 도시의 여행지들중 인기 순위 1~4위 세부정보 뽑기 -->
+	<select id="getTopFourDestByCityNo" parameterType="int" resultType="hashmap">
+	<![CDATA[ 
+	select 
+		a.destno 		as destno, 
+		a.destname 		as destname, 
+		a.cnt 			as cnt, 
+		dm.filename 	as destfilename, 
+		cc.name 		as categoryname
+	from (select 
+			destno, destname, cnt
+	      from (select 
+	      			rownum as ranking, destno, destname, cnt
+	            from (select d.no as destno, d.name as destname, count(*) as cnt
+                      from db_city c, db_destination d , db_views_destination v
+                      where c.no = d.city_no
+                      and d.no = v.data_no
+                      and c.no = #{value}
+                      group by d.no, d.name
+                      order by count(*) desc ))
+	            where ranking >=1 and ranking <=4) a, db_destination_img dm, db_destination_category dc, db_category_code cc
+	where a.destno = dm.dest_no
+	and a.destno = dc.dest_no
+	and dc.cate_code = cc.code
+	and dm.filename like '%main%'
+	]]>
+	</select>
+
+	<!-- 모든 상위 카테고리 뽑아오기-->
+	<select id="getUpperCategoryCode" resultType="kr.co.jhta.domain.CategoryCodeVO">
+		select
+			code,
+			name
+		from
+			db_category_code
+		where
+			code like '%00'
+		order by
+			code		
+	</select>
+
+	<!-- 상위 카테고리 번호를 주면 (100 , 200 등) 백자리로 시작하는 모든 카테고리 뽑아오기-->
+	<select id="getLowerCategoryCodeByUpperCode" parameterType="int" resultType="kr.co.jhta.domain.CategoryCodeVO">
+	<![CDATA[ 
+		select
+			code,
+			name
+		from
+			db_category_code
+		where code > #{value} and code < (#{value}+100)
+	]]>
+	</select>
+	
+	<!-- 여행지번호 destNo를 주면 이미지파일no을 전해준다. -->
+	<select id="getDestImgsByDestNo" parameterType="int" resultType="kr.co.jhta.domain.DestImgVO">
+		select
+			dest_no			as "dest.no",
+			filename
+		from
+			db_destination_img
+		where 
+			dest_no = #{value}
+	</select>		
+	
+	<!-- 하나의 도시번호에 여행지 4개씩을 전해준다 (페이지네이션) -->
+	<select id="getFourDestByCityNo" parameterType="kr.co.jhta.domain.Criteria" resultType="hashMap">
+		
+		select a.destno as destno, a.destname as destname, a.cnt as cnt, cc.name as categoryname
+			from (select destno, destname, cnt
+			            from(select rownum as ranking, destno, destname, cnt
+			                      from (select d.no as destno, d.name as destname, count(*) as cnt
+			                           <choose>  
+			                           		<when test="category == 0">     
+			                                  from db_city c, db_destination d , db_views_destination v
+			                                  where c.no = d.city_no
+			                                  and d.no = v.data_no(+)
+			                                  and c.no = #{cityNo}
+			                                  group by d.no, d.name ))
+			            where ranking >=#{beginIndex} and ranking &lt;=#{endIndex}) a, db_destination_category dc, db_category_code cc
+											</when>
+											<when test="category==100">
+											from db_city c, db_destination d , db_views_destination v, db_destination_category dc
+			                                  where c.no = d.city_no
+			                                  and d.no = v.data_no(+)
+			                                  and c.no = #{cityNo}
+			                                  and dc.dest_no = d.no
+			                                  and dc.cate_code in (100, 101, 102, 103)
+			                                  group by d.no, d.name ))
+			            where ranking >=#{beginIndex} and ranking &lt;=#{endIndex}) a, db_destination_category dc, db_category_code cc											
+											</when>											
+											<when test="category==200">
+											from db_city c, db_destination d , db_views_destination v, db_destination_category dc
+			                                  where c.no = d.city_no
+			                                  and d.no = v.data_no(+)
+			                                  and c.no = #{cityNo}
+			                                  and dc.dest_no = d.no
+			                                  and dc.cate_code in (200, 201, 202, 203)
+			                                  group by d.no, d.name ))
+			            where ranking >=#{beginIndex} and ranking &lt;=#{endIndex}) a, db_destination_category dc, db_category_code cc											
+											</when>											
+											<when test="category==300">
+											from db_city c, db_destination d , db_views_destination v, db_destination_category dc
+			                                  where c.no = d.city_no
+			                                  and d.no = v.data_no(+)
+			                                  and c.no = #{cityNo}
+			                                  and dc.dest_no = d.no
+			                                  and dc.cate_code in (300, 301, 302, 303)
+			                                  group by d.no, d.name ))
+			            where ranking >=#{beginIndex} and ranking &lt;=#{endIndex}) a, db_destination_category dc, db_category_code cc											
+											</when>											
+											<when test="category==400">
+											from db_city c, db_destination d , db_views_destination v, db_destination_category dc
+			                                  where c.no = d.city_no
+			                                  and d.no = v.data_no(+)
+			                                  and c.no = #{cityNo}
+			                                  and dc.dest_no = d.no
+			                                  and dc.cate_code in (400, 401, 402, 403)
+			                                  group by d.no, d.name ))
+			            where ranking >=#{beginIndex} and ranking &lt;=#{endIndex}) a, db_destination_category dc, db_category_code cc											
+											</when>											
+											<otherwise>
+											from db_city c, db_destination d , db_views_destination v, db_destination_category dc
+			                                  where c.no = d.city_no
+			                                  and d.no = v.data_no(+)
+			                                  and c.no = #{cityNo}
+			                                  and dc.dest_no = d.no
+			                                  and dc.cate_code = #{category}
+			                                  group by d.no, d.name ))
+			            where ranking >=#{beginIndex} and ranking &lt;=#{endIndex}) a, db_destination_category dc, db_category_code cc							
+											</otherwise>
+										</choose>
+			where a.destno = dc.dest_no
+			and dc.cate_code = cc.code
+			order by a.destno		       		
+	</select>
+	
+	<!-- 하나의 도시번호와 카테고리번호를 주면 그 도시의 여행지의 총갯수를 전해준다-->
+	<select id="countingDest" parameterType="kr.co.jhta.domain.Criteria" resultType="int">
+		select count(d.no)                                  		          
+		<choose>
+			<when test="category == 0">
+				from db_city c, db_destination d
+				where c.no = d.city_no
+				and c.no = #{cityNo}
+			</when>
+			<when test="category == 100">
+				from db_city c, db_destination d, db_destination_category dc
+				where c.no = d.city_no
+				and d.no = dc.dest_no
+				and c.no = #{cityNo}
+				and dc.cate_code in (100, 101, 102, 103)
+			</when>
+			<when test="category == 200">
+				from db_city c, db_destination d, db_destination_category dc
+				where c.no = d.city_no
+				and d.no = dc.dest_no
+				and c.no = #{cityNo}
+				and dc.cate_code in (200, 201, 202, 203)
+			</when> 
+			<when test="category == 300">
+				from db_city c, db_destination d, db_destination_category dc
+				where c.no = d.city_no
+				and d.no = dc.dest_no
+				and c.no = #{cityNo}
+				and dc.cate_code in (300, 301, 302, 303)
+			</when> 
+			<when test="category == 400">
+				from db_city c, db_destination d, db_destination_category dc
+				where c.no = d.city_no
+				and d.no = dc.dest_no
+				and c.no = #{cityNo}
+				and dc.cate_code in (400, 401, 402, 403)
+			</when> 
+			<otherwise>
+				from db_city c, db_destination d, db_destination_category dc
+				where c.no = d.city_no
+				and d.no = dc.dest_no
+				and c.no = #{cityNo}
+				and dc.cate_code = #{category}
+			</otherwise> 
+		</choose>
+	</select>
+	
+	<!--  cityNo  / cityNo, rating 을 주면 해당 도시의 리뷰 1~3개를 뽑아오기 -->
+	<select id="getThreeReviewsByCityNo" parameterType="kr.co.jhta.domain.CriteriaReview" resultType="hashmap">  
+		select 
+			b.ranking 		as ranking, 
+			substr(b.regdate, 1,4)||'-'||substr(b.regdate, 5,2)||'-'||substr(b.regdate, 7,2) 		as regdate, 
+			b.rating  		as rating,
+			b.reviewdata 	as reviewdata, 
+			b.username 		as username
+		from ( select rownum as ranking, regdate, rating, reviewdata, username
+		              from (select r.reg_date as regdate, r.rating as rating, r.data as reviewdata, u.name as username
+		                        from db_city c, db_destination d, db_review r, db_user u
+		                        where u.no = r.user_no 
+		                        and r.dest_no = d.no
+		                        and d.city_no = c.no
+		                        and c.no = #{cityNo}
+					<choose>
+						<when test="rating==''">
+								))b
+							where b.ranking >= #{beginIndex} and b.ranking &lt;= #{endIndex}
+						</when>
+						<otherwise>
+								and r.rating = #{rating}))b
+							where b.ranking >= #{beginIndex} and b.ranking &lt;= #{endIndex}
+						</otherwise>		
+					</choose>
+	</select>
+		
+	<!-- 하나의 도시번호와 rating를 주면 그 도시의 리뷰의 총갯수를 전해준다-->
+	<select id="countingReview" parameterType="kr.co.jhta.domain.CriteriaReview" resultType="int">
+		select count(r.reg_date)
+        from db_city c, db_destination d, db_review r, db_user u
+        where u.no = r.user_no 
+        and r.dest_no = d.no
+        and d.city_no = c.no
+	 <choose>
+	 	<when test="rating==''">
+	 		and c.no = #{cityNo}    
+	 	</when>
+	 	<otherwise>
+	 		and c.no = #{cityNo}
+	 		and r.rating = #{rating}
+	 	</otherwise>
+	 </choose>                        
+	</select>
+
+	<!-- dest_no 장소번호를 주면 그 장소의 카테고리 이름을 출력한다. -->
+	<select id="getCateNameByDestNo" parameterType="int" resultType="String">
+		select 
+			cc.name 		as catename
+		from 
+			db_destination d, db_destination_category dc, db_category_code cc
+		where d.no = dc.dest_no
+		and dc.cate_code = cc.code
+		and d.no = #{value}
+	</select>
+	
+	
+	
+	
+	<!-- 성인 -->
+	<select id="getCategoryByDestNo" parameterType="int" resultType="kr.co.jhta.domain.CategoryCodeVO">
+		SELECT
+			cat.CODE as code
+			,cat.NAME as name
+		FROM
+			DB_CATEGORY_CODE cat
+			,DB_DESTINATION_category destcat
+		WHERE
+			destcat.CATE_CODE = cat.CODE
+		AND	destcat.DEST_NO = #{value}	
+	</select>
+	
+	<select id="getDestImgFileNameByNo" parameterType="int" resultType="string">
+		SELECT
+			FILENAME
+		FROM
+			DB_DESTINATION_IMG
+		WHERE
+			DEST_NO = #{value}
+	</select>
+	
+	<select id="getDestByCategory" parameterType="int" resultType="kr.co.jhta.domain.DestVO">
+		SELECT
+			D.NO
+			,D.CITY_NO as "city.no"
+			,C.NAME as "city.name"
+			,D.ADDRESS
+			,D.LAT
+			,D.LNG
+			,D.NAME
+			,D.DETAILS
+			,D.CONTACT
+			,D.OPENTIME
+			,D.SITE
+		FROM
+			DB_DESTINATION D
+			,DB_CITY C
+			,DB_DESTINATION_CATEGORY DC
+		WHERE
+			DC.CATE_CODE = #{value}
+		AND D.CITY_NO = C.NO
+		AND D.NO = DC.DEST_NO
+	</select>
+	<select id="searchDest" parameterType="map" resultType="kr.co.jhta.domain.DestVO">
+		SELECT
+			D.NO
+			,D.NAME
+		FROM
+			DB_DESTINATION D
+			,DB_DESTINATION_CATEGORY DC
+		WHERE
+			D.CITY_NO = #{CITY_NO}
+		AND DC.CATE_CODE = #{CODE}
+		AND D.NAME LIKE #{KEYWORD}
+		AND D.NO = DC.DEST_NO
+	</select>
+	<select id="getDestData" resultType="kr.co.jhta.domain.DestVO">
+		SELECT
+			D.NO
+			,D.ADDRESS
+			,D.LAT
+			,D.LNG
+			,D.NAME
+			,D.DETAILS
+			,D.CONTACT
+			,D.OPENTIME
+			,D.SITE
+			,D.CITY_NO as "city.no"
+			,C.NAME as "city.name"
+		FROM
+			DB_DESTINATION D
+			,DB_CITY C
+		WHERE
+			D.CITY_NO = C.NO
+		ORDER BY
+			D.NO
+	</select>
+	<select id="updateDest" parameterType="kr.co.jhta.domain.DestVO">
+		UPDATE
+			DB_DESTINATION
+		<set>
+			<if test="city.no != null">CITY_NO = #{city.no},</if>
+			<if test="address != null">ADDRESS = #{address},</if>
+			<if test="lat != null">LAT = #{lat},</if>
+			<if test="lng != null">LNG = #{lng},</if>
+			<if test="name != null">NAME = #{name},</if>
+			<if test="details != null">DETAILS = #{details},</if>
+			<if test="contact != null">CONTACT = #{contact},</if>
+			<if test="openTime != null">OPENTIME = #{openTime},</if>
+			<if test="site != null">SITE = #{site},</if>			
+		</set>
+		WHERE
+			NO = #{no}
+	</select>
+	<select id="addNewCategoryToDest" parameterType="map">
+		INSERT INTO
+			DB_DESTINATION_CATEGORY(DEST_NO, CATE_CODE)
+		VALUES
+			(#{DEST_NO}, #{CATE_CODE})
+	</select>
+	<delete id="deleteAllCategoryByDestNo" parameterType="int">
+		DELETE FROM
+			DB_DESTINATION_CATEGORY
+		WHERE
+			DEST_NO = #{value}
+	</delete>
+	<delete id="deleteAllImgFileNameByDestNo" parameterType="int">
+		DELETE FROM
+			DB_DESTINATION_IMG
+		WHERE
+			DEST_NO = #{value}
+	</delete>
+	<select id="getDestSequence" resultType="int">
+		SELECT
+			DEST_SEQ.NEXTVAL
+		FROM
+			DUAL
+	</select>
+	<insert id="addNewDest" parameterType="kr.co.jhta.domain.DestVO">
+		insert into db_destination
+	 	(no, address, lat, lng, name, details, contact, opentime, site, city_no )
+	 	values
+	 	(#{no}, #{address}, #{lat}, #{lng}, #{name}, #{details}, #{contact}, #{openTime}, #{site}, #{city.no})	
+	</insert>
+	<!-- 주호 -->
+	<delete id="deleteReviewByUserNo" parameterType="int">
+		delete from db_review
+		where no = #{user.no}
+	</delete>
+	<delete id="deleteReviewByReviewNo"  parameterType="int">
+		delete from db_review
+		where no = #{value}
+	</delete>
+	<select id="getReviewByDestNo" parameterType="int" resultType="kr.co.jhta.domain.ReviewVO">
+		select 
+			R.NO,
+			R.DEST_NO 	as destNo,
+			R.USER_NO 	as "user.no",
+			U.NAME 		as "user.name",
+			R.REG_DATE 	as regDate,
+			R.RATING,
+			R.DATA
+		from
+			db_review R,
+			db_user U
+		where
+			R.dest_no = #{value}
+		and
+			R.USER_NO = U.NO	
+		order by
+			R.REG_DATE desc	
+	</select>
+	<select id="getUserNoByDestNo" parameterType="int" resultType="kr.co.jhta.domain.UserVO">
+		select 
+			user_no
+		from 
+			db_review
+		where
+  			dest_no= #{value}
+	</select>		
+	<select id="getUserNameByUserNo" parameterType="int" resultType="String">
+		select 
+  			a.name
+		from 
+  			db_user a, 
+  			db_review b
+		where 
+  			a.no = b.user_no
+		and a.no = #{value}
+	</select>
+	<!-- 여행지에 남긴 리뷰갯수 -->
+	<select id="getCountByReview" parameterType="int" resultType="int">
+		select 
+			count(*)
+		from 
+			db_review
+		where
+  			dest_No = #{value}
+	</select>
+	<select id="getEmotionCountByDest" parameterType="int" resultType="map">
+		SELECT 
+		  	sum(decode(rating, 'G', 1, 0)) G,
+		  	sum(decode(rating, 'A', 1, 0)) A,
+		  	sum(decode(rating, 'P', 1, 0)) P
+		FROM 
+			DB_REVIEW
+		WHERE 
+			DEST_NO = #{value}
+	</select>
+	<select id="getCountByAllThemeCode" parameterType="int" resultType="int">
+		select
+  			count(*)
+		from 
+  			db_plan d , db_plan_details p
+		where
+  			d.no = p.PLAN_NO
+		and 
+  			p.dest_no= #{value}
+	</select>
+	<select id="getCountByThemeCode" parameterType="int" resultType="map">
+		select
+			  sum(decode(d.theme_code,'1',1,0)) "1",
+			  sum(decode(d.theme_code,'2',1,0)) "2",
+			  sum(decode(d.theme_code,'3',1,0)) "3",
+			  sum(decode(d.theme_code,'4',1,0)) "4",
+			  sum(decode(d.theme_code,'5',1,0)) "5",
+			  sum(decode(d.theme_code,'6',1,0)) "6"
+		from
+  				db_plan d , db_plan_details p
+		where
+  				d.no = p.PLAN_NO 
+		and
+  				p.dest_no = #{value}
+	</select>
+	
+	<select id="getCateByDestNo" parameterType="int" resultType="kr.co.jhta.domain.CategoryCodeVO">
+		select 
+			category.name
+		from
+			db_category_code category, db_destination_category destCategory
+		where
+			category.code = destCategory.cate_code
+		and
+			destCategory.dest_no = #{no}			
+	</select>
+	
+	<!-- 지훈 -->
+	
+	<!-- 명신 -->
+	
+	
+	
+</mapper>

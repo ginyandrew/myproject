@@ -1,0 +1,108 @@
+##등록일정조회-월간
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schMonthSearchView.js'></script>
+		
+<div id="container">		
+		
+		<form id="frm1" action="" method="post">
+			<input type="hidden" name="schId" id="schId" value="">
+		</form>
+		<div class="titarea">
+	    	<h2>등록일정 조회</h2>
+		</div>
+	
+	
+		<div id="tab2Content" style="position: absolute;">
+		
+		
+		<div class="bp_calendar">
+			<div class="h_cal" style="background-color:gray;">
+				<div class="cld_left" >
+					<form id="frm2" action="" method="post">
+						<input name="schd_ymd" type="hidden" id="schd_ymd" value="$!cur_date"/>
+						<input type="hidden" id ="hidsch_gb_01" name="sch_gb_01" value="$!sch_gb_01">
+						<input type="hidden" id ="hidsch_gb_02" name="sch_gb_02" value="$!sch_gb_02">
+					</form>
+					
+					<select id="sch_gb_01" onchange="schgbChange(this.value)" class="sel" style="width:80px;height:30px">
+							<option value="01" #if("01" == "$!sch_gb_01") selected="selected"#end>강연회</option>
+							<option value="02" #if("02" == "$!sch_gb_01") selected="selected"#end>연수회</option>
+					</select>
+					<select id="sch_gb_02" onchange="divChange(this.value)" class="sel" style="width:150px;height:30px;">
+						<option value="01">연구회</option>
+						<option value="02">보수교육</option>
+						<option value="03">Faculty Seminar</option>
+						<option value="04">수요화상</option>
+						<option value="05">Osstem meeting</option>
+					</select>
+				</div>
+				
+				<div class="cld_center">
+					<a onclick="prevDate('$!prev_date')"  title="이전" class="sp cld_pre" ></a>
+					<input type="hidden" id ="year" value="$!select_year"><span> $!select_year년 $!select_month월</span>
+					<a onclick="nextDate('$!next_date')"  title="다음" class="sp cld_next" ></a>
+				</div>
+			
+				<div class="cld_chk">
+					<a href="#" onclick="movePage('schYearSearchView');return false;"><button type=button>연간</button></a>
+					<a href="#" onclick="movePage('schMonthSearchView');return false;"><button type=button class="on">월간</button></a>
+					<a href="#" onclick="movePage('schWeekSearchView');return false;"><button type=button >주간</button></a>
+				</div>
+			</div>
+			
+			<div class="cal_month" >
+				<table id="month_table">
+					<thead>
+						<tr>
+						 	<th scope="col" class="frst_bd">일</th>
+							<th scope="col">월</th>
+							<th scope="col">화</th>
+							<th scope="col">수</th>
+							<th scope="col">목</th>
+							<th scope="col">금</th>
+						    <th scope="col">토</th>  
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							$!front_blank
+							
+							#foreach($month_day_list in $!month_day_list)
+								#set($year = $month_day_list.YEAR)
+								#set($month = $month_day_list.MONTH)
+								#set($day = $month_day_list.DATE)
+								#set($week = $month_day_list.WEEK)
+								
+									<td class="frst_bd">
+										<div class="cld_date">	<!-- 이 div에 dday라고 넣어야 하늘색으로 표시된다. --> 
+											<!-- 바로 여기에 일정이 들어간다. -->
+											<div class="cld_day #if($week == "1") s_day #end">
+												 $day 
+											</div>
+											#set($theDate = $year + "." + $month + "." + $day)
+											#foreach($sch in $!schList)
+												#if($sch.get("STDATE") == $theDate)
+												<div class="cld_txt01">
+                                            		<a href="#" onclick="moveSchDetail($sch.get("SCH_ID"));return false;">
+                                            			<span>$sch.get("TITLE")</span>
+                                            		</a>
+                                        		</div>
+												#end
+											#end
+											
+										</div>
+									</td>
+									
+								#if($week == "7")
+				    		  	</tr>
+								#end
+							#end
+							$!end_blank
+					</tbody>
+				</table>
+			</div>
+		
+		
+		</div>
+		
+	</div>
+</div>		

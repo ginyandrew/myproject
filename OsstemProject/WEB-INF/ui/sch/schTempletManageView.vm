@@ -1,0 +1,231 @@
+##일정탬플릿 관리 
+<script type='text/javascript' src='$!WEB_ROOT/js/sch/sch/schTempletManageView.js'></script>
+<style>
+.ui-autocomplete {
+    max-height: 100px;
+    overflow-y: auto;
+    /* prevent horizontal scrollbar */
+    overflow-x: hidden;
+  }
+  /* IE 6 doesn't support max-height
+   * we use height instead, but this forces the menu to always be this tall
+   */
+  * html .ui-autocomplete {
+    height: 100px;
+  }
+</style> 
+<!-- container -->
+    <div id="container">
+          <div class="titarea">
+              <h2>일정템플릿 관리</h2>
+           </div>
+           
+           <form id="frm5" action="" method="post">
+			<input type="hidden" name="psnIds" id="psnIds" value="$!psnId">
+			<input type="hidden" name="gb01s" id="gb01s" value="$!gb01">
+			<input type="hidden" name="gb02s" id="gb02s" value="$!gb02">
+			<input type="hidden" name="sta_dt" id="sta_dt" value="$!stadt">
+			<input type="hidden" name="fin_dt" id="fin_dt" value="$!findt">
+			<input type="hidden" name="mbr_name"  id="mbr_name" value="$!mbrName">
+			<input type="hidden" name="templetYn" id="templetYn" value="$!tempYn">
+			</form> 
+			
+            <form id="frm1" action="" method="post">
+            <input type="hidden" name="pageNo" id="pageNo" value="$!curPage">
+            <input type="hidden" id="gb01s" value="$!gb01">
+			<input type="hidden" id="gb02s" value="$!gb02">
+			
+            <table width="100%" class="tb_view1">
+                <colgroup>
+                    <col width="9%" />
+                    <col width="9%" />
+                    <col width="*" />
+                </colgroup>
+               <tr>
+                    <th scope="row" rowspan="2">Course</th>
+                    <th>강연회</th>
+                    <td>
+                      <input  type="checkbox" name="gb101" value="01"><label><span ></span>연구회</label> 
+                      <input  type="checkbox" name="gb101" value="02"><label for="checkbox2"><span></span>보수교육  </label> 
+                      <input  type="checkbox" name="gb101" value="03"><label for="checkbox3"><span></span>Faculty Seminar</label> 
+                      <input  type="checkbox" name="gb101" value="04"><label for="checkbox4"><span></span>수요화상  </label> 
+                      <input  type="checkbox" name="gb101" value="05"><label for="checkbox5"><span></span>Osstem Meeting</label> 
+                    </td>
+                </tr>
+                <tr>
+                    <th class="bor_l">연수회</th>
+                    <td>
+                      <input type="checkbox" name="gb102" value="01"><label for="checkbox1"><span></span>Basic  </label> 
+                      <input type="checkbox" name="gb102" value="02"><label for="checkbox1"><span></span>Advanced    </label> 
+                      <input type="checkbox" name="gb102" value="03"><label for="checkbox1"><span></span>Master  </label> 
+                      <input type="checkbox" name="gb102" value="04"><label for="checkbox1"><span></span>One-day Course</label> 
+                    </td>
+                </tr>
+                <tr>
+                    <th colspan="2">Faculty / Director</th>
+                    <td id="mbr">
+                         <input name="mbrName" id="mbrName" style="width:200px;" type="text" onkeyup="autoSearchName(this);">
+                         <input type="hidden" id="mbrId" value="">
+                    </td> 
+                </tr>
+                <tr id="dateRow">
+                    <th scope="row" colspan="2">일시</th>
+                    <td>
+                       <div class="date_input">
+                            <input value="" type="text" name="stDates" id="sch_sta_dt">
+                            <span class="search-submit" >
+                        </div>
+                        <div class="date_txt">~</div>
+                        <div class="date_input marr20">
+                            <input value="" type="text" name="fiDates" id="sch_fin_dt">
+                            <span class="search-submit" >
+                        </div>
+                        <span class="btn_pack cttin"><a name="setMonth" href="#" onclick="setDate(1)">1개월</a></span>
+                        <span class="btn_pack cttin"><a name="setMonth" href="#" onclick="setDate(3)">3개월</a></span>
+                        <span class="btn_pack cttin"><a name="setMonth" href="#" onclick="setDate(6)">6개월</a></span>
+                        <span class="btn_pack cttin"><a name="setMonth" href="#" onclick="setDate(12)">1년</a></span>
+                    </td>
+                 </tr>
+                <tr>
+                    <th colspan="2">템플릿여부</th>
+                    <td>
+                         <select id="tempYn" name="tempYn" onchange="removeDt(this);" style="width:200px;">
+                         	#if("$!tempYn" == "")
+                         	<option selected value> --- 선택 --- </option>
+                         	<option value="Y">예</option>
+                         	<option value="N">아니오</option>
+                         	#else
+                         	<option value>--- 선택 --- </option>
+                         	<option #if($!tempYn == "Y") selected="selected" #end value="Y">예</option>
+                         	<option #if($!tempYn == "N") selected="selected" #end value="N">아니오</option>
+                         	#end
+                         </select>
+                    </td> 
+                </tr>
+                 
+            </table>
+            </form>
+            
+            
+            <!-- btn box(bottom) -->
+            <div class="box_btnarea padb10">
+            	<a href="" class="searchbtn alignr" onclick="submitForm();return false;">검색</a>
+            </div>
+            <!-- //btn box(bottom) -->
+         	
+           <form id="frm2" action="$!WEB_ROOT/sch/sch.do?method=schDetailView" method="post">	
+           		<input type="hidden" id="schId" name="schId" value="">
+           </form>
+           <form id="frm3" action="" method="post">
+           		<input type="hidden" id="totalCnt" value="$!schTotalCnt">
+           </form>
+           
+            <table width="100%" class="tb_list04 ">
+                <colgroup>
+                    <col width="5%" />
+                    <col width="10%" />
+                    <col width="6%" />
+                    <col width="6%" />
+                    <col width="*" />
+                    <col width="16%" />
+                    <col width="6%" />
+                    <col width="8%" />
+                    <col width="8%" />
+                   
+                </colgroup>
+                <thead>
+                     <tr>
+                        <th scope="row" rowspan="2">No.</th>
+                        <th scope="row" rowspan="2">Faculty /<br>Director</th>
+                        <th scope="row" colspan="4" >Course</th>
+                        <th scope="row" rowspan="2">회 차</th>
+                        <th scope="row" rowspan="2">교육자료</th>
+                        <th scope="row" rowspan="2">문제</th>
+                     </tr>
+                     <tr>
+                        
+                        <th scope="row" colspan="2" >종류</th>
+                        <th scope="row">제 목</th>
+                        <th scope="row">강의 일자</th>
+                     </tr>
+                </thead>
+                #foreach($sl in $!schList)
+				#set($ranking = $sl.seq)
+				#set($name = $sl.name)
+				#set($gb01 = $sl.sch_gb_01)
+				#set($gb02 = $sl.sch_gb_02)
+				#set($title = $sl.title)
+				#set($stadt = $sl.sch_sta_dt)
+				#set($findt = $sl.sch_fin_dt)
+				#set($cnt = $sl.sch_no_cnt)
+				#set($sch_id = $sl.id)
+                #set($temp_yn = $sl.temp_yn)
+                <tr>
+                    <td>$ranking</td>
+                    <td>$name</td>
+                    
+                    <td>
+                    #if($gb01=="01")
+                    	강연회
+	                    </td>
+	                    <td>
+	                    #if($gb02=="01") 연구회
+	                    #elseif($gb02=="02") 보수교육
+	                    #elseif($gb02=="03") Faculty Seminar
+	                    #elseif($gb02=="04") 수요화상
+	                    #elseif($gb02=="05") Osstem Meeting
+	                    #end
+                    #else
+                    	연수회
+                    	</td>
+	                    <td>
+	                    #if($gb02=="01") Basic
+	                    #elseif($gb02=="02") Advanced
+	                    #elseif($gb02=="03") Master
+	                    #elseif($gb02=="04") One-day Course
+	                    #end
+                    #end
+                    </td>
+                    <td><a href="#" onclick="searchSch($sch_id);">$title</a></td>
+                    <td>
+                    	#if($temp_yn == "Y") 
+                    		템플릿
+                    	#else
+	                    	#if ($stadt == $findt)
+	                    	$stadt
+	                    	#else
+	                    	$stadt ~ $findt
+	                    	#end
+                    	#end
+                    </td>
+                    <td>$cnt 회차</td>
+                    <td><span class="btn_pack sch gray"><button type="button" id="">상세정보</button></span></td>
+                    <td><span class="btn_pack sch gray"><button type="button" id="">상세정보</button></span></td>
+                </tr>
+                #end
+                 
+            </table>
+            
+            <!-- paging -->
+            #if($!schList.size() > 0)
+				$!page
+			#end
+			
+            <!-- //paging -->
+            <!-- <div class="box_btnarea mart15"></div>
+            -->
+             <!-- btn box(bottom) -->
+            <div class="box_btnarea">
+            	<p class="alignl">
+                   <span class="btn_pack basic"><a href="#" onclick="excelDown();return false;"><em class="ico_exdown"></em>엑셀 다운로드</a></span>
+                </p>
+               
+               <p class="alignr">
+                   <span class="btn_pack basic"><a href="$!WEB_ROOT/sch/sch.do?method=schInsertTemplet"><em class="ico_history"></em>템플릿 등록</a></span>
+		       </p>
+            </div>
+            <!-- //btn box(bottom) -->
+            
+    </div>
+</div>  
+<!-- //container -->
